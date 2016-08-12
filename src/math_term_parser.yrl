@@ -2,7 +2,8 @@ Terminals '(' ')' '+' '/' '*' '-' '^' word ',' number.
 Nonterminals expr argument arguments function variable signed_number.
 Rootsymbol expr.
 Right 1000 '^'.
-Left 200 '+' '-' '*' '/'.
+Left 220 '*' '/'.
+Left 200 '+' '-'.
 Unary 100 function.
 Unary 0 variable.
 

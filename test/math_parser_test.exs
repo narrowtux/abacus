@@ -18,7 +18,7 @@ defmodule AbacusTest do
     ] = lex_term("(3.2 + 4)")
   end
 
-  describe "the parser" do
+  describe "parse" do
     test "basic operators" do
       assert {:add, 1, 3} = parse_term("1+3")
       assert {:subtract, 50, 10} = parse_term("50- 10")
@@ -30,6 +30,9 @@ defmodule AbacusTest do
 
       assert {:add, {:add, 1, {:power, 3, 1}}, 1} =
         parse_term("1 + 3 ^ 1 + 1")
+
+      assert {:add, {:multiply, 1, 2}, {:multiply, 3, 2}} =
+        parse_term("1*2 + 3*2")
     end
 
     test "parantheses" do

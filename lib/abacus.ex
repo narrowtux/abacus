@@ -19,6 +19,22 @@ defmodule Abacus do
     end
   end
 
+  def format(string) when is_binary(string) or is_bitstring(string) do
+    case parse(string) do
+      {:ok, expr} ->
+        format(expr)
+      {:error, _} = error -> error
+    end
+  end
+
+  def format(expr) do
+    try do
+      {:ok, Abacus.Format.format(expr)}
+    rescue
+      error -> {:error, error}
+    end
+  end
+
   def parse(string) do
     {:ok, tokens} = lex(string)
     :math_term_parser.parse(tokens)
