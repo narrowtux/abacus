@@ -7,6 +7,8 @@ defmodule Abacus.Mixfile do
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     description: description(),
+     package: package(),
      deps: deps()]
   end
 
@@ -27,6 +29,21 @@ defmodule Abacus.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [{:ex_doc, ">= 0.0.0", only: :dev}]
+  end
+
+  defp description do
+    """
+    Mathematical expression parser and evaluator in Elixir.
+    """
+  end
+
+  defp package do
+    [# These are the default files included in the package
+     name: :abacus,
+     files: ["lib", "priv", "mix.exs", "README*", "readme*", "LICENSE*", "license*", "src"],
+     maintainers: ["Moritz Schmale"],
+     licenses: ["MIT"],
+     links: %{"GitHub" => "https://github.com/narrowtux/abacus"}]
   end
 end
