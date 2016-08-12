@@ -1,25 +1,29 @@
 defmodule Abacus do
-  def eval(string) when is_binary(string) do
+  def eval(expr) do
+    eval(expr, %{})
+  end
+
+  def eval(string, scope) when is_binary(string) do
     {:ok, expr} = string
     |> parse
 
     expr
-    |> eval
+    |> eval(scope)
   end
 
-  def eval(charlist) when is_bitstring(charlist) do
+  def eval(charlist, scope) when is_bitstring(charlist) do
     {:ok, expr} = charlist
     |> parse
 
     expr
-    |> eval
+    |> eval(scope)
   end
 
-  def eval(expr) do
+  def eval(expr, scope) do
     try do
-      {:ok, Abacus.Eval.eval(expr)}
+      {:ok, Abacus.Eval.eval(expr, scope)}
     rescue
-      error -> {:error, error.message}
+      error -> {:error, error}
     end
   end
 

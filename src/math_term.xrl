@@ -14,6 +14,8 @@ POWER = \^
 
 COMMA = ,
 
+SIGN = (\-|\+)
+
 WHITESPACE = [\s\t\n\r]
 
 Rules.
