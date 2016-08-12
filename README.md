@@ -1,16 +1,14 @@
-# MathParser
-
-**TODO: Add description**
+# Abacus
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+If [available in Hex](https://hex.pm/abacus), the package can be installed as:
 
-  1. Add `math_parser` to your list of dependencies in `mix.exs`:
+  1. Add `abacus` to your list of dependencies in `mix.exs`:
 
     ```elixir
     def deps do
-      [{:math_parser, "~> 0.1.0"}]
+      [{:abacus, "~> 0.1.0"}]
     end
     ```
 
@@ -18,7 +16,6 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
     ```elixir
     def application do
-      [applications: [:math_parser]]
+      [applications: [:abacus]]
     end
     ```
-

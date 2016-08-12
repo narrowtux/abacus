@@ -1,6 +1,6 @@
-defmodule MathParserTest do
+defmodule AbacusTest do
   use ExUnit.Case
-  doctest MathParser
+  doctest Abacus
 
   test "the lexer" do
     assert [
