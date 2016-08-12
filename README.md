@@ -31,7 +31,7 @@ Parses the expression and returns the syntax tree.
 An incomplete list of supported and planned features
 
  - [x] basic operators (`+`, `-`, `*`, `/`, `^`)
- - [ ] bitwise operators ('|', '&', '>>', '<<', etc.)
+ - [ ] bitwise operators (`|`, `&`, `>>`, `<<`, etc.)
  - [x] support for functions
    - [x] trigonometric functions(`sin`, `cos`, `tan`)
    - [x] floating point manipulation(`ceil`, `floor`, `round`)
