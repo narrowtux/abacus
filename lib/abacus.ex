@@ -3,6 +3,19 @@ defmodule Abacus do
     eval(expr, %{})
   end
 
+  def eval!(expr) do
+    eval!(expr, %{})
+  end
+
+  def eval!(string, scope) when is_binary(string) or is_bitstring(string) do
+    {:ok, expr} = parse(string)
+    eval!(expr, scope)
+  end
+
+  def eval!(expr, scope) do
+    Abacus.Eval.eval(expr, scope) 
+  end
+
   def eval(string, scope) when is_binary(string) or is_bitstring(string) do
     case parse(string) do
       {:ok, expr} ->
