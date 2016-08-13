@@ -4,24 +4,30 @@ defmodule Abacus.Format do
   def format(number) when is_integer(number), do: Integer.to_string(number)
   def format(number) when is_float(number), do: Float.to_string(number)
 
-  def format({operator1, {operator2, _, _} = a, b}) when operator1 in @basic_operators and
-                                                         operator2 in @basic_operators do
-    op_string = format(operator1)
-
-    "(#{format a}) #{op_string} #{format b}"
-  end
-
-  def format({operator1, a, {operator2, _, _} = b}) when operator1 in @basic_operators and
-                                                         operator2 in @basic_operators do
-    op_string = format(operator1)
-
-    "#{format a} #{op_string} (#{format b})"
-  end
-
-  def format({operator, a, b}) when operator in @basic_operators do
+  def format({operator, a, b} = expr) when operator in @basic_operators do
     op_string = format(operator)
 
-    "#{format a} #{op_string} #{format b}"
+    lhs = format a
+    rhs = format b
+
+    without_parantheses = "#{lhs} #{op_string} #{rhs}"
+    with_left_parantheses = "(#{lhs}) #{op_string} #{rhs}"
+    with_right_parantheses = "#{lhs} #{op_string} (#{rhs})"
+    with_both_parantheses = "(#{lhs}) #{op_string} (#{rhs})"
+
+    result = {
+      Abacus.parse(without_parantheses),
+      Abacus.parse(with_left_parantheses),
+      Abacus.parse(with_right_parantheses),
+      Abacus.parse(with_both_parantheses)
+    }
+
+    case result do
+      {{:ok, ^expr}, _, _, _} -> without_parantheses
+      {_, {:ok, ^expr}, _, _} -> with_left_parantheses
+      {_, _, {:ok, ^expr}, _} -> with_right_parantheses
+      {_, _, _, {:ok, ^expr}} -> with_both_parantheses 
+    end
   end
 
   def format({:function, name, arguments}) do
