@@ -1,9 +1,17 @@
 defmodule Abacus.Eval do
+  alias Abacus.Util
+
   def eval({:add, a, b}, scope), do: eval(a, scope) + eval(b, scope)
   def eval({:subtract, a, b}, scope), do: eval(a, scope) - eval(b, scope)
   def eval({:divide, a, b}, scope), do: eval(a, scope) / eval(b, scope)
   def eval({:multiply, a, b}, scope), do: eval(a, scope) * eval(b, scope)
   def eval({:power, a, b}, scope), do: :math.pow(eval(a, scope), eval(b, scope))
+
+  def eval({:factorial, a}, scope) do
+    a = eval(a, scope)
+
+    Util.factorial(a)
+  end
 
   def eval({:function, "sin", [a]}, scope), do: :math.sin(eval(a, scope))
   def eval({:function, "cos", [a]}, scope), do: :math.cos(eval(a, scope))

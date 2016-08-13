@@ -26,7 +26,7 @@ defmodule Abacus.Format do
       {{:ok, ^expr}, _, _, _} -> without_parantheses
       {_, {:ok, ^expr}, _, _} -> with_left_parantheses
       {_, _, {:ok, ^expr}, _} -> with_right_parantheses
-      {_, _, _, {:ok, ^expr}} -> with_both_parantheses 
+      {_, _, _, {:ok, ^expr}} -> with_both_parantheses
     end
   end
 
@@ -36,6 +36,22 @@ defmodule Abacus.Format do
     |> Enum.join(", ")
 
     "#{name}(#{arguments})"
+  end
+
+  def format({:factorial, a} = expr) do
+    a = format a
+    with_parantheses = "!(#{a})"
+    without_parantheses = "!#{a}"
+
+    result = {
+      Abacus.parse(without_parantheses),
+      Abacus.parse(with_parantheses)
+    }
+
+    case result do
+      {{:ok, ^expr}, _} -> without_parantheses
+      {_, {:ok, ^expr}} -> with_parantheses 
+    end
   end
 
   def format(operator) when operator in @basic_operators do

@@ -23,5 +23,9 @@ defmodule MathEvalTest do
     test "scoped variables" do
       assert {:ok, 8} = Abacus.eval("a + 3", %{"a" => 5})
     end
+
+    test "factorial" do
+      assert {:ok, 3628800} == Abacus.eval("!(5 * 2)")
+    end
   end
 end

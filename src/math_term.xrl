@@ -12,6 +12,8 @@ DIVIDE = \/
 MULTIPLY = \*
 POWER = \^
 
+FACTORIAL = !
+
 COMMA = ,
 
 SIGN = (\-|\+)
@@ -28,6 +30,7 @@ Rules.
 {DIVIDE} : {token, {'/', TokenLine}}.
 {MULTIPLY} : {token, {'*', TokenLine}}.
 {POWER} : {token, {'^', TokenLine}}.
+{FACTORIAL} : {token, {'!', TokenLine}}.
 {WORD}  : {token, {word, TokenLine, list_to_binary(TokenChars)}}.
 {WHITESPACE}+ : skip_token.
 {COMMA} : {token, {',', TokenLine}}.
