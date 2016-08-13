@@ -1,4 +1,4 @@
-# Abacus
+# Abacus ![Build status](https://travis-ci.org/narrowtux/abacus.svg)
 
 A parser for mathematical expressions.
 
