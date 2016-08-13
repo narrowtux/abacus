@@ -13,7 +13,7 @@ expr -> expr '+' expr : {add, '$1', '$3'}.
 expr -> expr '-' expr : {subtract, '$1', '$3'}.
 expr -> expr '/' expr : {divide, '$1', '$3'}.
 expr -> expr '*' expr : {multiply, '$1', '$3'}.
-expr -> '!' expr : {factorial, '$2'}.
+expr -> expr '!' : {factorial, '$1'}.
 expr -> '(' expr ')' : '$2'.
 expr -> number : extract_token('$1').
 expr -> function : '$1'.

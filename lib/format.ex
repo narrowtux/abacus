@@ -40,8 +40,8 @@ defmodule Abacus.Format do
 
   def format({:factorial, a} = expr) do
     a = format a
-    with_parantheses = "!(#{a})"
-    without_parantheses = "!#{a}"
+    with_parantheses = "(#{a})!"
+    without_parantheses = "#{a}!"
 
     result = {
       Abacus.parse(without_parantheses),
@@ -50,7 +50,7 @@ defmodule Abacus.Format do
 
     case result do
       {{:ok, ^expr}, _} -> without_parantheses
-      {_, {:ok, ^expr}} -> with_parantheses 
+      {_, {:ok, ^expr}} -> with_parantheses
     end
   end
 

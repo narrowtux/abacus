@@ -25,9 +25,9 @@ defmodule FormatTest do
     end
 
     test "advanced operators" do
-      assert format("!10") == {:ok, "!10"} 
-      assert format("!2-2") == {:ok, "!2 - 2"}
-      assert format("!(2+2)") == {:ok, "!(2 + 2)"}
+      assert format("10!") == {:ok, "10!"}
+      assert format("2!-2") == {:ok, "2! - 2"}
+      assert format("(2+2)!") == {:ok, "(2 + 2)!"}
     end
   end
 end

@@ -25,7 +25,7 @@ defmodule MathEvalTest do
     end
 
     test "factorial" do
-      assert {:ok, 3628800} == Abacus.eval("!(5 * 2)")
+      assert {:ok, 3628800} == Abacus.eval("(5 * 2)!")
     end
   end
 end
