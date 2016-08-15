@@ -29,5 +29,11 @@ defmodule FormatTest do
       assert format("2!-2") == {:ok, "2! - 2"}
       assert format("(2+2)!") == {:ok, "(2 + 2)!"}
     end
+
+    test "advanced variable expressions" do
+      assert format("a.b.c") == {:ok, "a.b.c"}
+      assert format("a[1+b+c]") == {:ok, "a[1 + b + c]"}
+      assert format("a.b[i]") == {:ok, "a.b[i]"}
+    end
   end
 end

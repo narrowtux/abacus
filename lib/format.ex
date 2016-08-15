@@ -64,5 +64,19 @@ defmodule Abacus.Format do
     end
   end
 
-  def format({:variable, name}), do: name
+  def format({:access, [{:variable, name} | rest]}) do
+    case rest do
+      [] -> name
+      [{:index, _} | _] -> "#{name}#{format {:access, rest}}"
+      [{:variable, _} | _] -> "#{name}.#{format {:access, rest}}"
+    end
+  end
+
+  def format({:access, [{:index, expr} | rest]}) do
+    case rest do
+      [] -> "[#{format expr}]"
+      [{:index, _} | _] -> "[#{format expr}]#{format {:access, rest}}"
+      [{:variable, _} | _] -> "[#{format expr}].#{format {:access, rest}}"
+    end
+  end
 end

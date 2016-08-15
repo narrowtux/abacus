@@ -27,5 +27,19 @@ defmodule MathEvalTest do
     test "factorial" do
       assert {:ok, 3628800} == Abacus.eval("(5 * 2)!")
     end
+
+    test "variables" do
+      assert {:ok, 10} == Abacus.eval("a.b.c[1]", %{
+        "a" => %{
+          "b" => %{
+            "c" => [
+              1,
+              10,
+              -42
+            ]
+          }
+        }
+        }) 
+    end
   end
 end

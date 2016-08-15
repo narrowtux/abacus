@@ -53,6 +53,17 @@ defmodule AbacusTest do
       assert {:function, "cos", [{:multiply, 45, 2}]} =
         parse_term("cos(45 * 2)")
     end
+
+    test "variable access" do
+      assert {:access, [variable: "a"]} =
+        parse_term("a")
+
+      assert {:access, [variable: "a", index: 2]} =
+        parse_term("a[2]")
+
+      assert {:access, [variable: "a", variable: "b", index: {:add, 1, 2}]} =
+        parse_term("a.b[1+2]")
+    end
   end
 
   def parse_term(string) do

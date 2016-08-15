@@ -1,5 +1,5 @@
-Terminals '(' ')' '+' '/' '*' '-' '^' word ',' number '!'.
-Nonterminals expr argument arguments function variable signed_number.
+Terminals '(' ')' '+' '/' '*' '-' '^' word ',' number '!' '.' '[' ']'.
+Nonterminals expr argument arguments function variable variables signed_number.
 Rootsymbol expr.
 Unary 400 '!'.
 Right 300 '^'.
@@ -17,7 +17,7 @@ expr -> expr '!' : {factorial, '$1'}.
 expr -> '(' expr ')' : '$2'.
 expr -> number : extract_token('$1').
 expr -> function : '$1'.
-expr -> variable : '$1'.
+expr -> variables : '$1'.
 expr -> signed_number : '$1'.
 
 signed_number -> '+' number : extract_token('$2').
@@ -25,6 +25,10 @@ signed_number -> '-' number : -extract_token('$2').
 
 argument -> expr : '$1'.
 variable -> word : {variable, extract_token('$1')}.
+
+variables -> variable : {access, ['$1']}.
+variables -> variables '.' variable : {access, concat([extract('$1'), ['$3']])}.
+variables -> variables '[' expr ']' : {access, concat([extract('$1'), [{index, '$3'}]])}.
 
 arguments -> argument : ['$1'].
 arguments -> argument ',' arguments : ['$1' | '$3'].
@@ -34,3 +38,5 @@ function -> word '(' arguments ')' : {function, extract_token('$1'), '$3'}.
 
 Erlang code.
 extract_token({_Token, _Line, Value}) -> Value.
+extract({access, Value}) -> Value.
+concat(List) -> lists:concat(List).

@@ -4,6 +4,8 @@ FLOAT = [0-9]+\.[0-9]*
 INTEGER = [0-9]+
 P_OPEN = \(
 P_CLOSE = \)
+B_OPEN = \[
+B_CLOSE = \]
 WORD = [a-zA-Z_][a-zA-Z0-9_\-]*
 
 PLUS = \+
@@ -15,6 +17,7 @@ POWER = \^
 FACTORIAL = !
 
 COMMA = ,
+DOT = \.
 
 SIGN = (\-|\+)
 
@@ -32,6 +35,10 @@ Rules.
 {POWER} : {token, {'^', TokenLine}}.
 {FACTORIAL} : {token, {'!', TokenLine}}.
 {WORD}  : {token, {word, TokenLine, list_to_binary(TokenChars)}}.
+{B_OPEN} : {token, {'[', TokenLine}}.
+{B_CLOSE} : {token, {']', TokenLine}}.
+{DOT} : {token, {'.', TokenLine}}.
+
 {WHITESPACE}+ : skip_token.
 {COMMA} : {token, {',', TokenLine}}.
 
