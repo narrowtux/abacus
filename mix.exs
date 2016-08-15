@@ -35,6 +35,13 @@ defmodule Abacus.Mixfile do
   defp description do
     """
     Mathematical expression parser and evaluator in Elixir.
+
+
+
+
+
+
+    Tags: math, parse, parser, eval
     """
   end
 
