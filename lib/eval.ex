@@ -43,9 +43,9 @@ defmodule Abacus.Eval do
 
   def eval({:ternary_if, condition, if_true, if_false}, scope) do
     if eval(condition, scope) do
-      if_true
+      eval if_true, scope
     else
-      if_false
+      eval if_false, scope
     end
   end
 
