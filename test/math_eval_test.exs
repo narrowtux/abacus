@@ -39,7 +39,14 @@ defmodule MathEvalTest do
             ]
           }
         }
-        }) 
+        })
+    end
+
+    test "variable in index expression" do
+      assert {:ok, 10} == Abacus.eval("list[a]", %{
+        "list" => [1, 2, 3, 10, 5],
+        "a" => 3
+        })
     end
   end
 end
