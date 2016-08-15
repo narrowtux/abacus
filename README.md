@@ -1,4 +1,4 @@
-# Abacus
+# Abacus ![Build status](https://travis-ci.org/narrowtux/abacus.svg)
 
 A parser for mathematical expressions.
 
@@ -31,7 +31,8 @@ Parses the expression and returns the syntax tree.
 An incomplete list of supported and planned features
 
  - [x] basic operators (`+`, `-`, `*`, `/`, `^`)
- - [ ] bitwise operators (`|`, `&`, `>>`, `<<`, etc.)
+ - [x] factorial (`!`)
+ - [x] bitwise operators (`|`, `&`, `>>`, `<<`, `~`, `|^` (xor))
  - [x] support for functions
    - [x] trigonometric functions(`sin`, `cos`, `tan`)
    - [x] floating point manipulation(`ceil`, `floor`, `round`)
@@ -45,7 +46,7 @@ An incomplete list of supported and planned features
 
     ```elixir
     def deps do
-      [{:abacus, "~> 0.1.0"}]
+      [{:abacus, "~> 0.3.1"}]
     end
     ```
 

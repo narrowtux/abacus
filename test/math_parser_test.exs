@@ -53,6 +53,32 @@ defmodule AbacusTest do
       assert {:function, "cos", [{:multiply, 45, 2}]} =
         parse_term("cos(45 * 2)")
     end
+
+    test "variable access" do
+      assert {:access, [variable: "a"]} =
+        parse_term("a")
+
+      assert {:access, [variable: "a", index: 2]} =
+        parse_term("a[2]")
+
+      assert {:access, [variable: "a", variable: "b", index: {:add, 1, 2}]} =
+        parse_term("a.b[1+2]")
+    end
+
+    test "bitwise operators" do
+      assert {:not, 10} = parse_term("~10")
+      assert {:and, 1, 2} = parse_term("1 & 2")
+      assert {:or, 2, 3} = parse_term("2 | 3")
+      assert {:xor, 3, 4} = parse_term("3 |^ 4")
+      assert {:shift_left, 1, 8} = parse_term("1 << 8")
+      assert {:shift_right, 32, 2} = parse_term("32 >> 2")
+    end
+
+    test "ternary operator" do
+      assert {:ternary_if, {:neq, {:access, [variable: "battery"]}, 0},
+        {:divide, {:subtract, {:access, [variable: "battery"]}, 1}, 253}, nil} =
+          parse_term("battery != 0 ? (battery - 1) / 253 : null")
+    end
   end
 
   def parse_term(string) do

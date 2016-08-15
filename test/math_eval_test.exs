@@ -23,5 +23,65 @@ defmodule MathEvalTest do
     test "scoped variables" do
       assert {:ok, 8} = Abacus.eval("a + 3", %{"a" => 5})
     end
+
+    test "factorial" do
+      assert {:ok, 3628800} == Abacus.eval("(5 * 2)!")
+    end
+
+    test "variables" do
+      assert {:ok, 10} == Abacus.eval("a.b.c[1]", %{
+        "a" => %{
+          "b" => %{
+            "c" => [
+              1,
+              10,
+              -42
+            ]
+          }
+        }
+        })
+    end
+
+    test "variable in index expression" do
+      assert {:ok, 10} == Abacus.eval("list[a]", %{
+        "list" => [1, 2, 3, 10, 5],
+        "a" => 3
+        })
+    end
+
+    test "bitwise operators" do
+      use Bitwise
+      assert {:ok, 1 &&& 2} == Abacus.eval("1 & 2")
+      assert {:ok, 3 ||| 4} == Abacus.eval("3 | 4")
+      assert {:ok, 1 ^^^ 2} == Abacus.eval("1 |^ 2")
+      assert {:ok, ~~~10} == Abacus.eval("~10")
+      assert {:ok, 1 <<< 8} == Abacus.eval("1 << 8")
+      assert {:ok, 32 >>> 2} == Abacus.eval("32 >> 2")
+    end
+
+    test "ternary operator" do
+      assert {:ok, 42} == Abacus.eval("1 == 1 ? 42 : 0")
+      assert {:ok, 42} == Abacus.eval("1 == 2 ? 0 : 42")
+    end
+
+    test "reserved words" do
+      assert {:ok, true} == Abacus.eval("true")
+      assert {:ok, false} == Abacus.eval("false")
+      assert {:ok, nil} == Abacus.eval("null")
+    end
+
+    test "comparison" do
+      assert {:ok, true} = Abacus.eval("42 > 10")
+      assert {:ok, true} = Abacus.eval("42 >= 10")
+      assert {:ok, false} = Abacus.eval("42 < 10")
+      assert {:ok, true} = Abacus.eval("10 < 42")
+      assert {:ok, false} = Abacus.eval("42 == 10")
+      assert {:ok, true} = Abacus.eval("42 != 10")
+      assert {:ok, false} = Abacus.eval("10 != 10")
+    end
+
+    test "invalid boolean arithmetic" do
+      assert {:error, _} = Abacus.eval("false + 1")
+    end
   end
 end

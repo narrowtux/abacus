@@ -1,23 +1,84 @@
 defmodule Abacus do
+  @moduledoc """
+  A math-expression parser, evaluator and formatter for Elixir.
+
+  ## Features
+
+  ### Supported operators
+
+   - `+`, `-`, `/`, `*`
+   - Exponentials with `^`
+   - Factorial (`n!`)
+   - Bitwise operators
+     * `<<` `>>` bitshift
+     * `&` bitwise and
+     * `|` bitwise or
+     * `|^` bitwise xor
+     * `~` bitwise not (unary)
+   - Boolean operators
+     * `&&`, `||`, `not`
+     * `==`, `!=`, `>`, `>=`, `<`, `<=`
+     * Ternary `condition ? if_true : if_false`
+
+  ### Supported functions
+
+   - `sin(x)`, `cos(x)`, `tan(x)`
+   - `round(n, precision = 0)`, `ceil(n, precision = 0)`, `floor(n, precision = 0)`
+
+  ### Reserved words
+
+   - `true`
+   - `false`
+   - `null`
+
+  ### Access to variables in scope
+
+   - `a` with scope `%{"a" => 10}` would evaluate to `10`
+   - `a.b` with scope `%{"a" => %{"b" => 42}}` would evaluate to `42`
+   - `list[2]` with scope `%{"list" => [1, 2, 3]}` would evaluate to `3`
+
+  If a variable is not in the scope, `eval/2` will result in `{:error, error}`.
+  """
+
+  @doc """
+  Evaluates the given expression with no scope.
+
+  If `expr` is a string, it will be parsed first.
+  """
+  @spec eval(expr::tuple | charlist | String.t) :: {:ok, result::number} | {:error, error::map}
+  @spec eval(expr::tuple | charlist | String.t, scope::map) :: {:ok, result::number} | {:error, error::map}
+
+  @spec eval!(expr::tuple | charlist | String.t) :: result::number
+  @spec eval!(expr::tuple | charlist | String.t, scope::map) :: result::number
   def eval(expr) do
     eval(expr, %{})
   end
 
+  @doc """
+  Evaluates the given expression.
+
+  Raises errors when parsing or evaluating goes wrong.
+  """
   def eval!(expr) do
     eval!(expr, %{})
   end
 
-  def eval!(string, scope) when is_binary(string) or is_bitstring(string) do
-    {:ok, expr} = parse(string)
+  @doc """
+  Evaluates the given expression with the given scope.
+
+  If `expr` is a string, it will be parsed first.
+  """
+  def eval!(expr, scope) when is_binary(expr) or is_bitstring(expr) do
+    {:ok, expr} = parse(expr)
     eval!(expr, scope)
   end
 
   def eval!(expr, scope) do
-    Abacus.Eval.eval(expr, scope) 
+    Abacus.Eval.eval(expr, scope)
   end
 
-  def eval(string, scope) when is_binary(string) or is_bitstring(string) do
-    case parse(string) do
+  def eval(expr, scope) when is_binary(expr) or is_bitstring(expr) do
+    case parse(expr) do
       {:ok, expr} ->
         eval(expr, scope)
       {:error, _} = error -> error
@@ -32,8 +93,14 @@ defmodule Abacus do
     end
   end
 
-  def format(string) when is_binary(string) or is_bitstring(string) do
-    case parse(string) do
+  @spec format(expr :: tuple | String.t | charlist) :: {:ok, String.t} | {:error, error::map}
+  @doc """
+  Pretty-prints the given expression.
+
+  If `expr` is a string, it will be parsed first.
+  """
+  def format(expr) when is_binary(expr) or is_bitstring(expr) do
+    case parse(expr) do
       {:ok, expr} ->
         format(expr)
       {:error, _} = error -> error
@@ -48,8 +115,12 @@ defmodule Abacus do
     end
   end
 
-  def parse(string) do
-    {:ok, tokens} = lex(string)
+  @spec parse(expr :: String.t | charlist) :: {:ok, expr::tuple} | {:error, error::map}
+  @doc """
+  Parses the given `expr` to a syntax tree.
+  """
+  def parse(expr) do
+    {:ok, tokens} = lex(expr)
     :math_term_parser.parse(tokens)
   end
 
