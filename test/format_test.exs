@@ -35,5 +35,14 @@ defmodule FormatTest do
       assert format("a[1+b+c]") == {:ok, "a[1 + b + c]"}
       assert format("a.b[i]") == {:ok, "a.b[i]"}
     end
+
+    test "bitwise operators" do
+      assert format("a & b") == {:ok, "a & b"}
+      assert format("a | b") == {:ok, "a | b"}
+      assert format("a |^ b") == {:ok, "a |^ b"}
+      assert format("~ 10") == {:ok, "~10"}
+      assert format("1 <<8") == {:ok, "1 << 8"}
+      assert format("32>>4") == {:ok, "32 >> 4"}
+    end
   end
 end

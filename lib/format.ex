@@ -1,5 +1,5 @@
 defmodule Abacus.Format do
-  @basic_operators [:add, :subtract, :divide, :multiply, :power]
+  @basic_operators [:add, :subtract, :divide, :multiply, :power, :and, :or, :xor, :shift_left, :shift_right]
 
   def format(number) when is_integer(number), do: Integer.to_string(number)
   def format(number) when is_float(number), do: Float.to_string(number)
@@ -54,6 +54,22 @@ defmodule Abacus.Format do
     end
   end
 
+  def format({:not, a} = expr) do
+    a = format a
+    with_parantheses = "~(#{a})"
+    without_parantheses = "~#{a}"
+
+    result = {
+      Abacus.parse(without_parantheses),
+      Abacus.parse(with_parantheses)
+    }
+
+    case result do
+      {{:ok, ^expr}, _} -> without_parantheses
+      {_, {:ok, ^expr}} -> with_parantheses
+    end
+  end
+
   def format(operator) when operator in @basic_operators do
     case operator do
       :add -> "+"
@@ -61,6 +77,11 @@ defmodule Abacus.Format do
       :divide -> "/"
       :multiply -> "*"
       :power -> "^"
+      :and -> "&"
+      :or -> "|"
+      :xor -> "|^"
+      :shift_left -> "<<"
+      :shift_right -> ">>"
     end
   end
 

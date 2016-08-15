@@ -64,6 +64,15 @@ defmodule AbacusTest do
       assert {:access, [variable: "a", variable: "b", index: {:add, 1, 2}]} =
         parse_term("a.b[1+2]")
     end
+
+    test "bitwise operators" do
+      assert {:not, 10} = parse_term("~10")
+      assert {:and, 1, 2} = parse_term("1 & 2")
+      assert {:or, 2, 3} = parse_term("2 | 3")
+      assert {:xor, 3, 4} = parse_term("3 |^ 4")
+      assert {:shift_left, 1, 8} = parse_term("1 << 8")
+      assert {:shift_right, 32, 2} = parse_term("32 >> 2")
+    end
   end
 
   def parse_term(string) do

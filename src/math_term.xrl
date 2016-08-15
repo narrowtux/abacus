@@ -38,7 +38,12 @@ Rules.
 {B_OPEN} : {token, {'[', TokenLine}}.
 {B_CLOSE} : {token, {']', TokenLine}}.
 {DOT} : {token, {'.', TokenLine}}.
-
+& : {token, {'&', TokenLine}}.
+\|\^ : {token, {'|^', TokenLine}}.
+\| : {token, {'|', TokenLine}}.
+>> : {token, {'>>', TokenLine}}.
+<< : {token, {'<<', TokenLine}}.
+~ : {token, {'~', TokenLine}}.
 {WHITESPACE}+ : skip_token.
 {COMMA} : {token, {',', TokenLine}}.
 

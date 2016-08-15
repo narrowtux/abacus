@@ -48,5 +48,15 @@ defmodule MathEvalTest do
         "a" => 3
         })
     end
+
+    test "bitwise operators" do
+      use Bitwise
+      assert {:ok, 1 &&& 2} == Abacus.eval("1 & 2")
+      assert {:ok, 3 ||| 4} == Abacus.eval("3 | 4")
+      assert {:ok, 1 ^^^ 2} == Abacus.eval("1 |^ 2")
+      assert {:ok, ~~~10} == Abacus.eval("~10")
+      assert {:ok, 1 <<< 8} == Abacus.eval("1 << 8")
+      assert {:ok, 32 >>> 2} == Abacus.eval("32 >> 2")
+    end
   end
 end

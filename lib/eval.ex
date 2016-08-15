@@ -1,4 +1,5 @@
 defmodule Abacus.Eval do
+  use Bitwise
   alias Abacus.Util
 
   def eval({:add, a, b}, scope), do: eval(a, scope) + eval(b, scope)
@@ -26,11 +27,27 @@ defmodule Abacus.Eval do
   def eval({:function, "round", [a]}, scope), do: Float.round(eval(a, scope))
   def eval({:function, "round", [a, precision]}, scope), do: Float.round(eval(a, scope), eval(precision, scope))
 
+  def eval(number, _scope) when is_number(number), do: number
+
+
   def eval({:access, _} = expr, scope) do
     eval expr, scope, scope
   end
 
-  def eval({:access, [{:variable, name} | rest]}, scope, root) do
+  def eval({:not, expr}, scope), do: bnot(eval(expr, scope))
+  def eval({:and, a, b}, scope), do: band(eval(a, scope), eval(b, scope))
+  def eval({:or, a, b}, scope), do: bor(eval(a, scope), eval(b, scope))
+  def eval({:xor, a, b}, scope), do: bxor(eval(a, scope), eval(b, scope))
+
+  def eval({:shift_right, a, b}, scope), do: eval(a, scope) >>> eval(b, scope)
+  def eval({:shift_left, a, b}, scope), do: eval(a, scope) <<< eval(b, scope)
+
+
+  # catch-all
+  # !!! write new evaluations above this definition !!!
+  def eval(expr, _scope), do: raise "can't evaluate the expression #{inspect expr}"
+
+  defp eval({:access, [{:variable, name} | rest]}, scope, root) do
     case Map.get(scope, name, nil) do
       nil -> raise "Key #{name} not found in #{inspect scope}"
       value ->
@@ -38,7 +55,7 @@ defmodule Abacus.Eval do
     end
   end
 
-  def eval({:access, [{:index, index} | rest]}, scope, root) do
+  defp eval({:access, [{:index, index} | rest]}, scope, root) do
     index = eval(index, root)
     case Enum.at(scope, index, nil) do
       nil -> raise "Index #{index} not found in list #{inspect scope}"
@@ -47,9 +64,5 @@ defmodule Abacus.Eval do
     end
   end
 
-  def eval({:access, []}, value, root), do: value
-
-  def eval(number, _scope) when is_number(number), do: number
-
-  def eval(expr), do: raise "can't evaluate the expression #{inspect expr}"
+  defp eval({:access, []}, value, _root), do: value
 end
