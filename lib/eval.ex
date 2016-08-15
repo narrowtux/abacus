@@ -1,7 +1,14 @@
 defmodule Abacus.Eval do
+  @moduledoc """
+  Function definitions on how to evaluate a syntax tree.
+
+  You usually don't need to call `eval/2` yourself, use `Abacus.eval/2` instead.
+  """
+
   use Bitwise
   alias Abacus.Util
 
+  @spec eval(expr::tuple | number, scope::map) :: result::number
   def eval({:add, a, b}, scope), do: eval(a, scope) + eval(b, scope)
   def eval({:subtract, a, b}, scope), do: eval(a, scope) - eval(b, scope)
   def eval({:divide, a, b}, scope), do: eval(a, scope) / eval(b, scope)

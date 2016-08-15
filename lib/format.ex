@@ -1,6 +1,13 @@
 defmodule Abacus.Format do
+  @moduledoc """
+  Function definitions on how to pretty-print expressions.
+
+  See `Abacus.format/1` for more information.
+  """
+
   @basic_operators [:add, :subtract, :divide, :multiply, :power, :and, :or, :xor, :shift_left, :shift_right]
 
+  @spec format(expr::tuple | number) :: String.t
   def format(number) when is_integer(number), do: Integer.to_string(number)
   def format(number) when is_float(number), do: Float.to_string(number)
 

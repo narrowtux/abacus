@@ -32,7 +32,7 @@ An incomplete list of supported and planned features
 
  - [x] basic operators (`+`, `-`, `*`, `/`, `^`)
  - [x] factorial (`!`)
- - [ ] bitwise operators (`|`, `&`, `>>`, `<<`, etc.)
+ - [x] bitwise operators (`|`, `&`, `>>`, `<<`, `~`, `|^` (xor))
  - [x] support for functions
    - [x] trigonometric functions(`sin`, `cos`, `tan`)
    - [x] floating point manipulation(`ceil`, `floor`, `round`)
@@ -46,7 +46,7 @@ An incomplete list of supported and planned features
 
     ```elixir
     def deps do
-      [{:abacus, "~> 0.1.0"}]
+      [{:abacus, "~> 0.2.0"}]
     end
     ```
 
