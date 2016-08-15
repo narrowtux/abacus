@@ -5,13 +5,18 @@ defmodule Abacus.Format do
   See `Abacus.format/1` for more information.
   """
 
-  @basic_operators [:add, :subtract, :divide, :multiply, :power, :and, :or, :xor, :shift_left, :shift_right]
+  @binary_operators [:add, :subtract, :divide, :multiply, :power,
+    :and, :or, :xor, :shift_left, :shift_right,
+    :eq, :neq, :gt, :gte, :lt, :lte,
+    :logical_and, :logical_or]
+  @unary_operators [:logical_not, :not, :factorial]
+  @operators Enum.concat([@binary_operators, @unary_operators])
 
-  @spec format(expr::tuple | number) :: String.t
+  @spec format(expr::tuple | number | boolean | nil) :: String.t
   def format(number) when is_integer(number), do: Integer.to_string(number)
   def format(number) when is_float(number), do: Float.to_string(number)
 
-  def format({operator, a, b} = expr) when operator in @basic_operators do
+  def format({operator, a, b} = expr) when operator in @binary_operators do
     op_string = format(operator)
 
     lhs = format a
@@ -61,10 +66,11 @@ defmodule Abacus.Format do
     end
   end
 
-  def format({:not, a} = expr) do
+  def format({operator, a} = expr) when operator in @unary_operators do
     a = format a
-    with_parantheses = "~(#{a})"
-    without_parantheses = "~#{a}"
+    op = format operator
+    with_parantheses = "#{op}(#{a})"
+    without_parantheses = "#{op}#{a}"
 
     result = {
       Abacus.parse(without_parantheses),
@@ -77,7 +83,28 @@ defmodule Abacus.Format do
     end
   end
 
-  def format(operator) when operator in @basic_operators do
+  def format({:ternary_if, condition, if_true, if_false} = expr) do
+    fcondition = format condition
+    ftrue = format if_true
+    ffalse = format if_false
+
+    v = [false, true]
+
+    permutations = for c <- v, t <- v, f <- v do
+      format = "#{parantheses fcondition, c} ? #{parantheses ftrue, t} : #{parantheses ffalse, f}"
+      {:ok, expr} = Abacus.parse(format)
+      {format, expr}
+    end
+
+    {format, _} = permutations
+    |> Enum.filter(fn {_format, e} -> e == expr end)
+    |> List.first
+
+    format
+  end
+
+
+  def format(operator) when operator in @operators do
     case operator do
       :add -> "+"
       :subtract -> "-"
@@ -87,8 +114,18 @@ defmodule Abacus.Format do
       :and -> "&"
       :or -> "|"
       :xor -> "|^"
+      :not -> "~"
       :shift_left -> "<<"
       :shift_right -> ">>"
+      :eq -> "=="
+      :neq -> "!="
+      :gt -> ">"
+      :gte -> ">="
+      :lt -> "<"
+      :lte -> "<="
+      :logical_and -> "&&"
+      :logical_or -> "||"
+      :logical_not -> "not"
     end
   end
 
@@ -105,6 +142,21 @@ defmodule Abacus.Format do
       [] -> "[#{format expr}]"
       [{:index, _} | _] -> "[#{format expr}]#{format {:access, rest}}"
       [{:variable, _} | _] -> "[#{format expr}].#{format {:access, rest}}"
+    end
+  end
+
+  def format(false), do: "false"
+  def format(true), do: "true"
+  def format(nil), do: "null"
+
+  def format(expr), do: {:error, "Can't format #{inspect expr}"}
+
+
+  defp parantheses(expr, truth) do
+    if truth do
+      "(#{expr})"
+    else
+      expr
     end
   end
 end

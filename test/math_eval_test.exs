@@ -58,5 +58,30 @@ defmodule MathEvalTest do
       assert {:ok, 1 <<< 8} == Abacus.eval("1 << 8")
       assert {:ok, 32 >>> 2} == Abacus.eval("32 >> 2")
     end
+
+    test "ternary operator" do
+      assert {:ok, 42} == Abacus.eval("1 == 1 ? 42 : 0")
+      assert {:ok, 42} == Abacus.eval("1 == 2 ? 0 : 42")
+    end
+
+    test "reserved words" do
+      assert {:ok, true} == Abacus.eval("true")
+      assert {:ok, false} == Abacus.eval("false")
+      assert {:ok, nil} == Abacus.eval("null")
+    end
+
+    test "comparison" do
+      assert {:ok, true} = Abacus.eval("42 > 10")
+      assert {:ok, true} = Abacus.eval("42 >= 10")
+      assert {:ok, false} = Abacus.eval("42 < 10")
+      assert {:ok, true} = Abacus.eval("10 < 42")
+      assert {:ok, false} = Abacus.eval("42 == 10")
+      assert {:ok, true} = Abacus.eval("42 != 10")
+      assert {:ok, false} = Abacus.eval("10 != 10")
+    end
+
+    test "invalid boolean arithmetic" do
+      assert {:error, _} = Abacus.eval("false + 1")
+    end
   end
 end

@@ -44,5 +44,21 @@ defmodule FormatTest do
       assert format("1 <<8") == {:ok, "1 << 8"}
       assert format("32>>4") == {:ok, "32 >> 4"}
     end
+
+    test "comparison operators" do
+      assert format("1 > 2") == {:ok, "1 > 2"}
+      assert format("1 < 2") == {:ok, "1 < 2"}
+      assert format("1== 2") == {:ok, "1 == 2"}
+      assert format("1 != 2") == {:ok, "1 != 2"}
+      assert format("1 >= 2") == {:ok, "1 >= 2"}
+      assert format("1 <= 2") == {:ok, "1 <= 2"}
+    end
+
+    test "ternary operator" do
+      assert format("a ? true : false") == {:ok, "a ? true : false"}
+      assert format("1==a ? true : false") == {:ok, "1 == a ? true : false"}
+      assert format("2+(a ? true : false)") == {:ok, "2 + (a ? true : false)"}
+      assert format("2+(true ? not (a ? true : false):false)") == {:ok, "2 + (true ? not(a ? true : false) : false)"}
+    end
   end
 end

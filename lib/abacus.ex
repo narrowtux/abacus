@@ -10,16 +10,26 @@ defmodule Abacus do
    - Exponentials with `^`
    - Factorial (`n!`)
    - Bitwise operators
-     - `<<` `>>` bitshift
-     - `&` bitwise and
-     - `|` bitwise or
-     - `|^` bitwise xor
-     - `~` bitwise not (unary)
+     * `<<` `>>` bitshift
+     * `&` bitwise and
+     * `|` bitwise or
+     * `|^` bitwise xor
+     * `~` bitwise not (unary)
+   - Boolean operators
+     * `&&`, `||`, `not`
+     * `==`, `!=`, `>`, `>=`, `<`, `<=`
+     * Ternary `condition ? if_true : if_false`
 
   ### Supported functions
 
    - `sin(x)`, `cos(x)`, `tan(x)`
    - `round(n, precision = 0)`, `ceil(n, precision = 0)`, `floor(n, precision = 0)`
+
+  ### Reserved words
+
+   - `true`
+   - `false`
+   - `null`
 
   ### Access to variables in scope
 

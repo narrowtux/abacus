@@ -73,6 +73,12 @@ defmodule AbacusTest do
       assert {:shift_left, 1, 8} = parse_term("1 << 8")
       assert {:shift_right, 32, 2} = parse_term("32 >> 2")
     end
+
+    test "ternary operator" do
+      assert {:ternary_if, {:neq, {:access, [variable: "battery"]}, 0},
+        {:divide, {:subtract, {:access, [variable: "battery"]}, 1}, 253}, nil} =
+          parse_term("battery != 0 ? (battery - 1) / 253 : null")
+    end
   end
 
   def parse_term(string) do

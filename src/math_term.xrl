@@ -24,6 +24,12 @@ SIGN = (\-|\+)
 WHITESPACE = [\s\t\n\r]
 
 Rules.
+% reserved words appear up here so they're not eaten by {WORD}
+not : {token, {'not', TokenLine}}.
+null : {token, {nil, TokenLine}}.
+false : {token, {false, TokenLine}}.
+true : {token, {true, TokenLine}}.
+
 {INTEGER}    : {token, {number, TokenLine, list_to_integer(TokenChars)}}.
 {FLOAT}      : {token, {number, TokenLine, list_to_float(TokenChars)}}.
 {P_OPEN}    : {token, {'(', TokenLine}}.
@@ -44,6 +50,17 @@ Rules.
 >> : {token, {'>>', TokenLine}}.
 << : {token, {'<<', TokenLine}}.
 ~ : {token, {'~', TokenLine}}.
+&& : {token, {'and', TokenLine}}.
+\|\| : {token, {'or', TokenLine}}.
+
+\? : {token, {'?', TokenLine}}.
+: : {token, {':', TokenLine}}.
+!= : {token, {'!=', TokenLine}}.
+== : {token, {'==', TokenLine}}.
+<= : {token, {'<=', TokenLine}}.
+>= : {token, {'>=', TokenLine}}.
+<  : {token, {'<', TokenLine}}.
+>  : {token, {'>', TokenLine}}.
 {WHITESPACE}+ : skip_token.
 {COMMA} : {token, {',', TokenLine}}.
 
