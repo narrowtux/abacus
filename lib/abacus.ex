@@ -124,6 +124,26 @@ defmodule Abacus do
     :math_term_parser.parse(tokens)
   end
 
+  def variables(expr) do
+    Abacus.Tree.reduce(expr, fn
+      {:access, variables} ->
+        Enum.map(variables, fn
+          {:variable, var} -> var
+          {:index, index} -> variables(index)
+        end)
+        |> List.flatten
+        |> Enum.uniq
+      {_operator, a, b, c} ->
+        Enum.concat([a, b, c])
+        |> Enum.uniq
+      {_operator, a, b} ->
+        Enum.concat(a, b)
+        |> Enum.uniq
+      {_operator, a} -> a
+      other -> []
+    end)
+  end
+
   defp lex(string) when is_binary(string) do
     string
     |> String.to_charlist
