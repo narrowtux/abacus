@@ -8,97 +8,171 @@ defmodule Abacus.Eval do
   use Bitwise
   alias Abacus.Util
 
-  @spec eval(expr::tuple | number, scope::map) :: result::number | boolean | nil
-  def eval({:add, a, b}, scope), do: eval(a, scope) + eval(b, scope)
-  def eval({:subtract, a, b}, scope), do: eval(a, scope) - eval(b, scope)
-  def eval({:divide, a, b}, scope), do: eval(a, scope) / eval(b, scope)
-  def eval({:multiply, a, b}, scope), do: eval(a, scope) * eval(b, scope)
-  def eval({:power, a, b}, scope), do: :math.pow(eval(a, scope), eval(b, scope))
+  @spec eval(expr::tuple | number, scope::map) :: {:ok, result::number} | {:ok, boolean} | {:ok, nil} | {:error, term}
 
-  def eval({:factorial, a}, scope) do
-    a = eval(a, scope)
+  # BASIC ARITHMETIC
 
-    Util.factorial(a)
-  end
+  def eval({:add, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, a + b}
+  def eval({:subtract, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, a - b}
+  def eval({:divide, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, a / b}
+  def eval({:multiply, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, a * b}
 
-  # for equality operators, check if the raw expressions are equal, this makes
-  # evaluation a bit faster
-  def eval({:eq, a, b}, scope), do: (a == b) || (eval(a, scope) == eval(b, scope))
-  def eval({:neq, a, b}, scope), do: (a != b) || (eval(a, scope) != eval(b, scope))
+  # OTHER OPERATORS
 
-  def eval({:gt, a, b}, scope), do: eval(a, scope) > eval(b, scope)
-  def eval({:gte, a, b}, scope), do: eval(a, scope) >= eval(b, scope)
-  def eval({:lt, a, b}, scope), do: eval(a, scope) < eval(b, scope)
-  def eval({:lte, a, b}, scope), do: eval(a, scope) <= eval(b, scope)
+  def eval({:power, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, :math.pow(a, b)}
+  def eval({:factorial, a} , _)
+    when is_number(a),
+    do: {:ok, Util.factorial(a)}
 
-  def eval({:logical_and, a, b}, scope) do
-    eval(a, scope) && eval(b, scope)
-  end
+  # COMPARISION
 
-  def eval({:logical_or, a, b}, scope) do
-    eval(a, scope) || eval(b, scope)
-  end
+  def eval({:eq, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, a == b}
+  def eval({:neq, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, a != b}
 
-  def eval({:logical_not, a}, scope), do: not eval(a, scope)
+  def eval({:gt, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, a > b}
+  def eval({:gte, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, a >= b}
+  def eval({:lt, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, a < b}
+  def eval({:lte, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, a <= b}
 
-  def eval({:ternary_if, condition, if_true, if_false}, scope) do
-    if eval(condition, scope) do
-      eval if_true, scope
+  # LOGICAL COMPARISION
+
+  def eval({:logical_and, a, b}, _)
+    when is_boolean(a) and is_boolean(b),
+    do: {:ok, a && b}
+
+  def eval({:logical_or, a, b}, _)
+    when is_boolean(a) and is_boolean(b),
+    do: {:ok, a || b}
+
+  def eval({:logical_not, a}, _)
+    when is_boolean(a),
+    do: not {:ok, a}
+
+  def eval({:ternary_if, condition, if_true, if_false}, _) do
+    if condition do
+      {:ok, if_true}
     else
-      eval if_false, scope
+      {:ok, if_false}
     end
   end
 
-  def eval({:function, "sin", [a]}, scope), do: :math.sin(eval(a, scope))
-  def eval({:function, "cos", [a]}, scope), do: :math.cos(eval(a, scope))
-  def eval({:function, "tan", [a]}, scope), do: :math.tan(eval(a, scope))
+  # FUNCTIONS
 
-  def eval({:function, "floor", [a]}, scope), do: Float.floor(eval(a, scope))
-  def eval({:function, "floor", [a, precision]}, scope), do: Float.floor(eval(a, scope), eval(precision, scope))
+  def eval({:function, "sin", [a]}, _)
+    when is_number(a),
+    do: {:ok, :math.sin(a)}
+  def eval({:function, "cos", [a]}, _)
+    when is_number(a),
+    do: {:ok, :math.cos(a)}
+  def eval({:function, "tan", [a]}, _)
+    when is_number(a),
+    do: {:ok, :math.tan(a)}
 
-  def eval({:function, "ceil", [a]}, scope), do: Float.ceil(eval(a, scope))
-  def eval({:function, "ceil", [a, precision]}, scope), do: Float.ceil(eval(a, scope), eval(precision, scope))
+  def eval({:function, "floor", [a]}, _)
+    when is_number(a),
+    do: {:ok, Float.floor(a)}
+  def eval({:function, "floor", [a, precision]}, _)
+    when is_number(a) and is_number(precision),
+    do: {:ok, Float.floor(a, precision)}
 
-  def eval({:function, "round", [a]}, scope), do: Float.round(eval(a, scope))
-  def eval({:function, "round", [a, precision]}, scope), do: Float.round(eval(a, scope), eval(precision, scope))
+  def eval({:function, "ceil", [a]}, _)
+    when is_number(a),
+    do: {:ok, Float.ceil(a)}
+  def eval({:function, "ceil", [a, precision]}, _)
+    when is_number(a) and is_number(precision),
+    do: {:ok, Float.ceil(a, precision)}
 
-  def eval(number, _scope) when is_number(number), do: number
-  def eval(reserved, _scope) when reserved in [nil, true, false], do: reserved
+  def eval({:function, "round", [a]}, _)
+    when is_number(a),
+    do: {:ok, Float.round(a)}
+  def eval({:function, "round", [a, precision]}, _)
+    when is_number(a) and is_number(precision),
+    do: {:ok, Float.round(a, precision)}
 
+  # IDENTITY
+
+  def eval(number, _)
+    when is_number(number),
+    do: {:ok, number}
+  def eval(reserved, _)
+    when reserved in [nil, true, false],
+    do: {:ok, reserved}
+
+  # ACCESS
 
   def eval({:access, _} = expr, scope) do
     eval expr, scope, scope
   end
 
-  def eval({:not, expr}, scope), do: bnot(eval(expr, scope))
-  def eval({:and, a, b}, scope), do: band(eval(a, scope), eval(b, scope))
-  def eval({:or, a, b}, scope), do: bor(eval(a, scope), eval(b, scope))
-  def eval({:xor, a, b}, scope), do: bxor(eval(a, scope), eval(b, scope))
+  # BINARY OPERATORS
 
-  def eval({:shift_right, a, b}, scope), do: eval(a, scope) >>> eval(b, scope)
-  def eval({:shift_left, a, b}, scope), do: eval(a, scope) <<< eval(b, scope)
+  def eval({:not, expr}, _)
+    when is_number(expr),
+    do: {:ok, bnot(expr)}
+  def eval({:and, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, band(a, b)}
+  def eval({:or, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, bor(a, b)}
+  def eval({:xor, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, bxor(a, b)}
+
+  def eval({:shift_right, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, a >>> b}
+  def eval({:shift_left, a, b}, _)
+    when is_number(a) and is_number(b),
+    do: {:ok, a <<< b}
 
 
-  # catch-all
+  # CATCH-ALL
   # !!! write new evaluations above this definition !!!
-  def eval(expr, _scope), do: raise "can't evaluate the expression #{inspect expr}"
+  def eval(_expr, _scope), do: {:error, :einval}
+
+  # SPECIAL HANDLING FOR ACCESS
+
+  import Abacus.Tree, only: [reduce: 2]
 
   defp eval({:access, [{:variable, name} | rest]}, scope, root) do
     case Map.get(scope, name, nil) do
-      nil -> raise "Key #{name} not found in #{inspect scope}"
+      nil -> {:error, :einkey}
       value ->
         eval({:access, rest}, value, root)
     end
   end
 
   defp eval({:access, [{:index, index} | rest]}, scope, root) do
-    index = eval(index, root)
+    {:ok, index} = reduce(index, &eval(&1, root))
     case Enum.at(scope, index, nil) do
-      nil -> raise "Index #{index} not found in list #{inspect scope}"
+      nil -> {:error, :einkey}
       value ->
         eval({:access, rest}, value, root)
     end
   end
 
-  defp eval({:access, []}, value, _root), do: value
+  defp eval({:access, []}, value, _root), do: {:ok, value}
 end

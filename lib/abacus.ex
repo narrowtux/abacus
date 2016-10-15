@@ -68,29 +68,22 @@ defmodule Abacus do
 
   If `expr` is a string, it will be parsed first.
   """
-  def eval!(expr, scope) when is_binary(expr) or is_bitstring(expr) do
-    {:ok, expr} = parse(expr)
-    eval!(expr, scope)
-  end
 
   def eval!(expr, scope) do
-    Abacus.Eval.eval(expr, scope)
+    case Abacus.Eval.eval(expr, scope) do
+      {:ok, result} -> result
+      {:error, error} -> raise error
+    end
   end
 
   def eval(expr, scope) when is_binary(expr) or is_bitstring(expr) do
-    case parse(expr) do
-      {:ok, expr} ->
-        eval(expr, scope)
-      {:error, _} = error -> error
+    with {:ok, parsed} = parse(expr) do
+      eval(parsed, scope)
     end
   end
 
   def eval(expr, scope) do
-    try do
-      {:ok, Abacus.Eval.eval(expr, scope)}
-    rescue
-      error -> {:error, error}
-    end
+    Abacus.Tree.reduce(expr, &Abacus.Eval.eval(&1, scope))
   end
 
   @spec format(expr :: tuple | String.t | charlist) :: {:ok, String.t} | {:error, error::map}
@@ -120,27 +113,31 @@ defmodule Abacus do
   Parses the given `expr` to a syntax tree.
   """
   def parse(expr) do
-    {:ok, tokens} = lex(expr)
-    :math_term_parser.parse(tokens)
+    with {:ok, tokens} = lex(expr) do
+      :math_term_parser.parse(tokens)
+    end
   end
 
   def variables(expr) do
     Abacus.Tree.reduce(expr, fn
       {:access, variables} ->
-        Enum.map(variables, fn
+        res = Enum.map(variables, fn
           {:variable, var} -> var
           {:index, index} -> variables(index)
         end)
         |> List.flatten
         |> Enum.uniq
+        {:ok, res}
       {_operator, a, b, c} ->
-        Enum.concat([a, b, c])
+        res = Enum.concat([a, b, c])
         |> Enum.uniq
+        {:ok, res}
       {_operator, a, b} ->
-        Enum.concat(a, b)
+        res = Enum.concat(a, b)
         |> Enum.uniq
+        {:ok, res}
       {_operator, a} -> a
-      other -> []
+      _ -> {:ok, []}
     end)
   end
 
