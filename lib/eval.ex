@@ -111,6 +111,10 @@ defmodule Abacus.Eval do
     when is_number(a) and is_number(precision),
     do: {:ok, Float.round(a, precision)}
 
+  def eval({:function, "log10", [a]}, _)
+    when is_number(a),
+    do: {:ok, :math.log10(a)}
+
   # IDENTITY
 
   def eval(number, _)

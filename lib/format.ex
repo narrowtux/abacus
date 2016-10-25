@@ -151,12 +151,6 @@ defmodule Abacus.Format do
 
   def format(expr), do: {:error, "Can't format #{inspect expr}"}
 
-
-  defp parantheses(expr, truth) do
-    if truth do
-      "(#{expr})"
-    else
-      expr
-    end
-  end
+  defp parantheses(expr, true), do: "(#{expr})"
+  defp parantheses(expr, false), do: expr
 end

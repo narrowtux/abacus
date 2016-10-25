@@ -14,6 +14,7 @@ defmodule MathEvalTest do
     test "function calls" do
       assert {:ok, :math.sin(90)} == Abacus.eval("sin(90)")
       assert {:ok, Float.round(512.4122, 2)} == Abacus.eval("round(512.4122, 2)")
+      assert {:ok, 2} == Abacus.eval("log10(100)")
     end
 
     test "error" do
