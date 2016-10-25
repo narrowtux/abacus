@@ -50,7 +50,7 @@ defmodule Abacus.Mixfile do
   defp package do
     [# These are the default files included in the package
      name: :abacus,
-     files: ["lib", "mix.exs", "README*", "readme*", "LICENSE*", "license*", "src"],
+     files: ["lib", "mix.exs", "README*", "LICENSE*", "src"],
      maintainers: ["Moritz Schmale"],
      licenses: ["MIT"],
      links: %{"GitHub" => "https://github.com/narrowtux/abacus"}]
