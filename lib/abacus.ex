@@ -77,8 +77,9 @@ defmodule Abacus do
   end
 
   def eval(expr, scope) when is_binary(expr) or is_bitstring(expr) do
-    with {:ok, parsed} = parse(expr) do
-      eval(parsed, scope)
+    case parse(expr) do
+      {:ok, parsed} -> eval(parsed, scope)
+      {:error, error} -> {:error, error}
     end
   end
 
