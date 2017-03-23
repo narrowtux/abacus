@@ -84,5 +84,9 @@ defmodule MathEvalTest do
     test "invalid boolean arithmetic" do
       assert {:error, _} = Abacus.eval("false + 1")
     end
+
+    test "unexpected token" do
+      assert {:error, _} = Abacus.eval("1 + )")
+    end
   end
 end
