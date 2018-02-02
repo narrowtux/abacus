@@ -55,7 +55,7 @@ defmodule Abacus do
   end
 
   @doc """
-  Evaluates the given expression.
+  Evaluates the given expression.
 
   Raises errors when parsing or evaluating goes wrong.
   """
@@ -64,7 +64,7 @@ defmodule Abacus do
   end
 
   @doc """
-  Evaluates the given expression with the given scope.
+  Evaluates the given expression with the given scope.
 
   If `expr` is a string, it will be parsed first.
   """
@@ -77,9 +77,8 @@ defmodule Abacus do
   end
 
   def eval(expr, scope) when is_binary(expr) or is_bitstring(expr) do
-    case parse(expr) do
-      {:ok, parsed} -> eval(parsed, scope)
-      {:error, error} -> {:error, error}
+    with {:ok, parsed} = parse(expr) do
+      eval(parsed, scope)
     end
   end
 
@@ -111,11 +110,14 @@ defmodule Abacus do
 
   @spec parse(expr :: String.t | charlist) :: {:ok, expr::tuple} | {:error, error::map}
   @doc """
-  Parses the given `expr` to a syntax tree.
+  Parses the given `expr` to a syntax tree.
   """
   def parse(expr) do
-    with {:ok, tokens} = lex(expr) do
+    with {:ok, tokens} <- lex(expr) do
       :math_term_parser.parse(tokens)
+    else
+      {:error, error, _} -> {:error, error}
+      {:error, error} -> {:error, error}
     end
   end
 
@@ -149,7 +151,8 @@ defmodule Abacus do
   end
 
   defp lex(string) do
-    {:ok, tokens, _} = :math_term.string(string)
-    {:ok, tokens}
+    with {:ok, tokens, _} <- :math_term.string(string) do
+      {:ok, tokens}
+    end
   end
 end

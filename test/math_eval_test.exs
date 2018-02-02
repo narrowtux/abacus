@@ -4,11 +4,11 @@ defmodule MathEvalTest do
 
   describe "The eval module should evaluate" do
     test "basic arithmetic" do
-      assert {:ok, 1 + 2} = Abacus.eval("1 + 2")
+      assert {:ok, 1 + 2} == Abacus.eval("1 + 2")
 
-      assert {:ok, 10 * 10} = Abacus.eval("10 * 10")
+      assert {:ok, 10 * 10} == Abacus.eval("10 * 10")
 
-      assert {:ok, 20 * (1 + 2)} = Abacus.eval("20 * (1 + 2)")
+      assert {:ok, 20 * (1 + 2)} == Abacus.eval("20 * (1 + 2)")
     end
 
     test "function calls" do
