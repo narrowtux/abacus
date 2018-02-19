@@ -36,24 +36,18 @@ defmodule Abacus.Eval do
 
   # COMPARISION
 
-  def eval({:eq, a, b}, _)
-    when is_number(a) and is_number(b),
+  def eval({:eq, a, b}, _),
     do: {:ok, a == b}
-  def eval({:neq, a, b}, _)
-    when is_number(a) and is_number(b),
+  def eval({:neq, a, b}, _),
     do: {:ok, a != b}
 
-  def eval({:gt, a, b}, _)
-    when is_number(a) and is_number(b),
+  def eval({:gt, a, b}, _),
     do: {:ok, a > b}
-  def eval({:gte, a, b}, _)
-    when is_number(a) and is_number(b),
+  def eval({:gte, a, b}, _),
     do: {:ok, a >= b}
-  def eval({:lt, a, b}, _)
-    when is_number(a) and is_number(b),
+  def eval({:lt, a, b}, _),
     do: {:ok, a < b}
-  def eval({:lte, a, b}, _)
-    when is_number(a) and is_number(b),
+  def eval({:lte, a, b}, _),
     do: {:ok, a <= b}
 
   # LOGICAL COMPARISION
@@ -68,7 +62,7 @@ defmodule Abacus.Eval do
 
   def eval({:logical_not, a}, _)
     when is_boolean(a),
-    do: not {:ok, a}
+    do: {:ok, not a}
 
   def eval({:ternary_if, condition, if_true, if_false}, _) do
     if condition do
@@ -123,6 +117,9 @@ defmodule Abacus.Eval do
   def eval(reserved, _)
     when reserved in [nil, true, false],
     do: {:ok, reserved}
+  def eval(string, _)
+    when is_binary(string),
+    do: {:ok, string}
 
   # ACCESS
 

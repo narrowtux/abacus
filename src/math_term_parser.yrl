@@ -5,7 +5,7 @@ Terminals '(' ')'
   '.' '[' ']'
   '~' '&' '|' '|^' '<<' '>>'
   'and' 'or' 'not' '?' ':'
-  '==' '!=' '<=' '>=' '<' '>' nil true false.
+  '==' '!=' '<=' '>=' '<' '>' nil true false string.
 Nonterminals expr argument arguments function variable variables signed_number.
 Rootsymbol expr.
 Unary 1000 '!'.
@@ -88,6 +88,9 @@ arguments -> argument ',' arguments : ['$1' | '$3'].
 
 function -> word '(' ')' : {function, extract_token('$1'), []}.
 function -> word '(' arguments ')' : {function, extract_token('$1'), '$3'}.
+
+% Strings
+expr -> string : extract_token('$1').
 
 Erlang code.
 extract_token({_Token, _Line, Value}) -> Value.

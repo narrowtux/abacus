@@ -79,6 +79,9 @@ defmodule MathEvalTest do
       assert {:ok, false} = Abacus.eval("42 == 10")
       assert {:ok, true} = Abacus.eval("42 != 10")
       assert {:ok, false} = Abacus.eval("10 != 10")
+      assert {:ok, true} = Abacus.eval(~s["a" == "a"])
+      assert {:ok, true} = Abacus.eval(~s["a" == a], %{"a" => "a"})
+      assert {:ok, true} = Abacus.eval("\"a\\\"b\" == a", %{"a" => "a\"b"})
     end
 
     test "invalid boolean arithmetic" do

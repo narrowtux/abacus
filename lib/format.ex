@@ -15,6 +15,9 @@ defmodule Abacus.Format do
   @spec format(expr::tuple | number | boolean | nil) :: String.t
   def format(number) when is_integer(number), do: Integer.to_string(number)
   def format(number) when is_float(number), do: Float.to_string(number)
+  def format(string) when is_binary(string) do
+    
+  end
 
   def format({operator, a, b} = expr) when operator in @binary_operators do
     op_string = format(operator)

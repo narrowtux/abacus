@@ -37,6 +37,14 @@ defmodule Abacus do
    - `a.b` with scope `%{"a" => %{"b" => 42}}` would evaluate to `42`
    - `list[2]` with scope `%{"list" => [1, 2, 3]}` would evaluate to `3`
 
+  ### Data types
+
+   - Boolean: `true`, `false`
+   - None: `null`
+   - Integer: `0`, `40`, `-184`
+   - Float: `0.2`, `12.`, `.12`
+   - String: `"Hello World"`, `"He said: \"Let's write a math parser\""`
+
   If a variable is not in the scope, `eval/2` will result in `{:error, error}`.
   """
 
@@ -77,7 +85,7 @@ defmodule Abacus do
   end
 
   def eval(expr, scope) when is_binary(expr) or is_bitstring(expr) do
-    with {:ok, parsed} = parse(expr) do
+    with {:ok, parsed} <- parse(expr) do
       eval(parsed, scope)
     end
   end

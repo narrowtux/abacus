@@ -47,7 +47,7 @@ defmodule Abacus.Tree do
     end
   end
 
-  def reduce(other, fun) when is_number(other) or other in [nil, true, false] do
+  def reduce(other, fun) when is_number(other) or other in [nil, true, false] or is_binary(other) do
     fun.(other)
   end
 end
