@@ -70,4 +70,4 @@ true : {token, {true, TokenLine}}.
 {COMMA} : {token, {',', TokenLine}}.
 
 Erlang code.
-parse_string(Chars) -> list_to_binary(string:replace(string:replace(string:slice(list_to_binary(Chars), 1, length(Chars) - 2), <<"\\\"">>, <<"\"">>, all), <<"\\\\">>, <<"\\">>, all)).
+parse_string(Chars) -> list_to_binary(string:replace(string:replace('Elixir.String':slice(list_to_binary(Chars), 1, length(Chars) - 2), <<"\\\"">>, <<"\"">>, all), <<"\\\\">>, <<"\\">>, all)).
