@@ -23,16 +23,16 @@ defmodule Abacus.Tree do
   end
 
   def reduce({operator, a, b, c}, fun) do
-    with {:ok, a} = reduce(a, fun),
-         {:ok, b} = reduce(b, fun),
-         {:ok, c} = reduce(c, fun) do
+    with {:ok, a} <- reduce(a, fun),
+         {:ok, b} <- reduce(b, fun),
+         {:ok, c} <- reduce(c, fun) do
       fun.({operator, a, b, c})
     end
   end
 
   def reduce({operator, a, b}, fun) do
-    with {:ok, a} = reduce(a, fun),
-         {:ok, b} = reduce(b, fun) do
+    with {:ok, a} <- reduce(a, fun),
+         {:ok, b} <- reduce(b, fun) do
       fun.({operator, a, b})
     end
   end
@@ -42,7 +42,7 @@ defmodule Abacus.Tree do
   end
 
   def reduce({operator, a}, fun) do
-    with {:ok, a} = reduce(a, fun) do
+    with {:ok, a} <- reduce(a, fun) do
       fun.({operator, a})
     end
   end
