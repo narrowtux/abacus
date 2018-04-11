@@ -20,3 +20,4 @@ erl_crash.dump
 
 .DS_Store
 *.beam
+.elixir_ls
