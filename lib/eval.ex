@@ -37,9 +37,9 @@ defmodule Abacus.Eval do
   # COMPARISION
 
   def eval({:eq, a, b}, _),
-    do: {:ok, a == b}
+    do: {:ok, equals(a, b)}
   def eval({:neq, a, b}, _),
-    do: {:ok, a != b}
+    do: {:ok, not equals(a, b)}
 
   def eval({:gt, a, b}, _),
     do: {:ok, a > b}
@@ -176,4 +176,9 @@ defmodule Abacus.Eval do
   end
 
   defp eval({:access, []}, value, _root), do: {:ok, value}
+
+
+  defp equals(str, atom) when is_binary(str) and is_atom(atom), do: str == Atom.to_string(atom)
+  defp equals(atom, str) when is_binary(str) and is_atom(atom), do: str == Atom.to_string(atom)
+  defp equals(a, b), do: a == b
 end
