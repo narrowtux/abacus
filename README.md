@@ -46,7 +46,7 @@ An incomplete list of supported and planned features
 
     ```elixir
     def deps do
-      [{:abacus, "~> 0.4.0"}]
+      [{:abacus, "~> 0.4.2"}]
     end
     ```
 
