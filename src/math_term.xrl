@@ -7,6 +7,8 @@ P_OPEN = \(
 P_CLOSE = \)
 B_OPEN = \[
 B_CLOSE = \]
+C_OPEN = \{
+C_CLOSE = \}
 WORD = [a-zA-Z_][a-zA-Z0-9_\-]*
 
 PLUS = \+
@@ -14,6 +16,8 @@ MINUS = \-
 DIVIDE = \/
 MULTIPLY = \*
 POWER = \^
+
+NEWLINE = \n
 
 FACTORIAL = !
 
@@ -38,6 +42,8 @@ true : {token, {true, TokenLine}}.
 {FLOAT_START}      : {token, {number, TokenLine, list_to_float([48 | TokenChars])}}.
 {P_OPEN}    : {token, {'(', TokenLine}}.
 {P_CLOSE}   : {token, {')', TokenLine}}.
+{C_OPEN}    : {token, {'{', TokenLine}}.
+{C_CLOSE}   : {token, {'}', TokenLine}}.
 {PLUS}   : {token, {'+', TokenLine}}.
 {MINUS}  : {token, {'-', TokenLine}}.
 {DIVIDE} : {token, {'/', TokenLine}}.
@@ -66,6 +72,9 @@ true : {token, {true, TokenLine}}.
 >= : {token, {'>=', TokenLine}}.
 <  : {token, {'<', TokenLine}}.
 >  : {token, {'>', TokenLine}}.
+=> : {token, {'=>', TokenLine}}.
+
+{NEWLINE} : {token, {newline, TokenLine}}.
 {WHITESPACE}+ : skip_token.
 {COMMA} : {token, {',', TokenLine}}.
 

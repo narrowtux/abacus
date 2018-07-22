@@ -16,7 +16,7 @@ defmodule Abacus.Format do
   def format(number) when is_integer(number), do: Integer.to_string(number)
   def format(number) when is_float(number), do: Float.to_string(number)
   def format(string) when is_binary(string) do
-    
+
   end
 
   def format({operator, a, b} = expr) when operator in @binary_operators do
@@ -105,7 +105,6 @@ defmodule Abacus.Format do
 
     format
   end
-
 
   def format(operator) when operator in @operators do
     case operator do
