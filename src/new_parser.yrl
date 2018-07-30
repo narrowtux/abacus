@@ -45,31 +45,37 @@ expr -> expr 'and' expr : {'&&', [], ['$1', '$3']}.
 expr -> expr 'or' expr : {'||', [], ['$1', '$3']}.
 expr -> 'not' expr : {'not', [], ['$2']}.
 
-expr -> expr '?' expr ':' expr : {ternary_if, '$1', '$3', '$5'}.
+% ternary if op
+expr -> expr '?' expr ':' expr : {'if', [{import, 'Elixir.Kernel'}], [
+    '$1', 
+    [
+      {'do', '$3'}, 
+      {'else', '$5'}
+    ]
+  ]
+}.
 
 % Binary stuff
-expr -> '~' expr : {'not', '$2'}.
-expr -> expr '&' expr : {'and', '$1', '$3'}.
-expr -> expr '|' expr : {'or', '$1', '$3'}.
-expr -> expr '|^' expr : {'xor', '$1', '$3'}.
-expr -> expr '<<' expr : {shift_left, '$1', '$3'}.
-expr -> expr '>>' expr : {shift_right, '$1', '$3'}.
+expr -> '~' expr : {'~~~', [], ['$2']}.
+expr -> expr '&' expr : {'&&&', [], ['$1', '$3']}.
+expr -> expr '|' expr : {'|||', [], ['$1', '$3']}.
+expr -> expr '|^' expr : {'^^^', [], ['$1', '$3']}.
+expr -> expr '<<' expr : {'<<<', [], ['$1', '$3']}.
+expr -> expr '>>' expr : {'>>>', [], ['$1', '$3']}.
 
 % Math stuff
-expr -> expr '^' expr : {power, '$1', '$3'}.
+expr -> expr '^' expr : {'^', [], ['$1', '$3']}.
 expr -> expr '+' expr : {'+', [], ['$1', '$3']}.
 expr -> expr '-' expr : {'-', [], ['$1', '$3']}.
 expr -> expr '/' expr : {'/', [], ['$1', '$3']}.
 expr -> expr '*' expr : {'*', [], ['$1', '$3']}.
-expr -> expr '!' : {factorial, '$1'}.
+expr -> expr '!' : {'!', [], ['$1']}.
 
 % Grouping
 expr -> '(' expr ')' : '$2'.
 
 % What is an expression
 expr -> number : extract_token('$1').
-expr -> function : '$1'.
-expr -> variables : prepare_variables('$1').
 expr -> signed_number : '$1'.
 
 % Support signed numbers
@@ -77,26 +83,21 @@ signed_number -> '+' number : extract_token('$2').
 signed_number -> '-' number : -extract_token('$2').
 
 % Functions
+expr -> function : '$1'.
+
 argument -> expr : '$1'.
 arguments -> argument : ['$1'].
 arguments -> argument ',' arguments : ['$1' | '$3'].
 
-function -> word '(' ')' : {function, extract_token('$1'), []}.
-function -> word '(' arguments ')' : {function, extract_token('$1'), '$3'}.
+function -> expr '(' ')' : {'$1', [], []}.
+function -> expr '(' arguments ')' : {'$1', [], '$3'}.
 
 % Strings
 expr -> string : extract_token('$1').
 
-% Lambdas
-statement -> expr : '$1'.
-statements -> statement newline : ['$1'].
-statements -> statement : ['$1'].
-statements -> statement newline statements : ['$1' | '$3'].
-block -> '{' statements '}' : {do, [], '$2'}.
-lambda -> '(' arguments ')' '=>' block : {'=>', [], [extract_token('$2'), '$5']}.
-expr -> lambda : '$1'.
-
 % Access
+expr -> variables : '$1'.
+
 variable -> word : {variable, extract_token('$1')}.
 
 variables -> variable : var('$1').
@@ -120,14 +121,3 @@ var({variable, Name}) ->
     S -> S
   end,
   {Symbol, [], 'nil'}.
-
-prepare_variables({'.', Ctx, [Lhs, {variable, Name}]}) ->
-  get_in(Ctx, [prepare_variables(Lhs), Name]);
-prepare_variables({'.', Ctx, [Lhs, Expr]}) ->
-  get_in(Ctx, [prepare_variables(Lhs), Expr]);
-prepare_variables(Diff) ->
-  Diff.
-
-get_in(Ctx, Args) ->
-  {{'.', [], 
-    [{'__aliases__', [{alias, false}], ['Abacus', 'Runtime', 'Scope']}, get_in]}, Ctx, Args}.

@@ -59,4 +59,23 @@ defmodule Abacus.Runtime.Scope do
   def get_in(list, index, _) when is_list(list) and is_integer(index) and index >= 0 do
     Enum.at(list, index, nil)
   end
+
+  @doc """
+  Renames first-level variables into their respective `:"var\#{x}"` atoms
+  """
+  def prepare_scope(scope, lookup) when is_map(scope) or is_list(scope) do
+    Enum.map(scope, fn
+      {k, v} ->
+        case Map.get(lookup, to_string(k)) do
+          nil ->
+            # will not be used anyway
+            {k, v}
+          varname ->
+            {varname, v}
+        end
+      v ->
+        v
+    end)
+  end
+  def prepare_scope(primitive, _), do: primitive
 end

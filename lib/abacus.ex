@@ -84,14 +84,41 @@ defmodule Abacus do
     end
   end
 
-  def eval(expr, scope) when is_binary(expr) or is_bitstring(expr) do
-    with {:ok, parsed} <- parse(expr) do
-      eval(parsed, scope)
+  def compile(source) when is_binary(source) do
+    source
+    |> :erlang.binary_to_list()
+    |> compile()
+  end
+  def compile(source) when is_list(source) do
+    with _ = Process.put(:variables, %{}),
+        {:ok, tokens, _} <- :math_term.string(source),
+        {:ok, ast} <- :new_parser.parse(tokens) do
+          vars = Process.get(:variables)
+          ast = Abacus.Compile.post_compile(ast, vars)
+          Process.delete(:variables)
+          {:ok, ast, vars}
     end
   end
 
-  def eval(expr, scope) do
-    Abacus.Tree.reduce(expr, &Abacus.Eval.eval(&1, scope))
+  def eval(source, scope \\ [], vars \\ %{})
+  def eval(source, scope, _vars) when is_binary(source) or is_bitstring(source) do
+    with {:ok, ast, vars} <- compile(source) do
+      eval(ast, scope, vars)
+    end
+  end
+
+  def eval(expr, scope, vars) do
+    scope = Abacus.Runtime.Scope.prepare_scope(scope, vars)
+    try do
+       case Code.eval_quoted(expr, scope) do
+        {result, _} -> {:ok, result}
+        error -> error
+      end
+    catch
+      e -> {:error, e}
+    rescue
+      e -> {:error, e}
+    end
   end
 
   @spec format(expr :: tuple | String.t | charlist) :: {:ok, String.t} | {:error, error::map}
@@ -101,8 +128,8 @@ defmodule Abacus do
   If `expr` is a string, it will be parsed first.
   """
   def format(expr) when is_binary(expr) or is_bitstring(expr) do
-    case parse(expr) do
-      {:ok, expr} ->
+    case compile(expr) do
+      {:ok, expr, _vars} ->
         format(expr)
       {:error, _} = error -> error
     end
@@ -113,54 +140,6 @@ defmodule Abacus do
       {:ok, Abacus.Format.format(expr)}
     rescue
       error -> {:error, error}
-    end
-  end
-
-  @spec parse(expr :: String.t | charlist) :: {:ok, expr::tuple} | {:error, error::map}
-  @doc """
-  Parses the given `expr` to a syntax tree.
-  """
-  def parse(expr) do
-    with {:ok, tokens} <- lex(expr) do
-      :math_term_parser.parse(tokens)
-    else
-      {:error, error, _} -> {:error, error}
-      {:error, error} -> {:error, error}
-    end
-  end
-
-  def variables(expr) do
-    Abacus.Tree.reduce(expr, fn
-      {:access, variables} ->
-        res = Enum.map(variables, fn
-          {:variable, var} -> var
-          {:index, index} -> variables(index)
-        end)
-        |> List.flatten
-        |> Enum.uniq
-        {:ok, res}
-      {_operator, a, b, c} ->
-        res = Enum.concat([a, b, c])
-        |> Enum.uniq
-        {:ok, res}
-      {_operator, a, b} ->
-        res = Enum.concat(a, b)
-        |> Enum.uniq
-        {:ok, res}
-      {_operator, a} -> a
-      _ -> {:ok, []}
-    end)
-  end
-
-  defp lex(string) when is_binary(string) do
-    string
-    |> String.to_charlist
-    |> lex
-  end
-
-  defp lex(string) do
-    with {:ok, tokens, _} <- :math_term.string(string) do
-      {:ok, tokens}
     end
   end
 end

@@ -1,6 +1,5 @@
 defmodule MathEvalTest do
   use ExUnit.Case
-  doctest Abacus.Eval
 
   describe "The eval module should evaluate" do
     test "basic arithmetic" do
