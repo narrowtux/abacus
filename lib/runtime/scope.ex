@@ -76,6 +76,10 @@ defmodule Abacus.Runtime.Scope do
       v ->
         v
     end)
+    |> Enum.filter(fn
+      {bin, _} when is_binary(bin) -> false
+      _ -> true
+    end)
   end
   def prepare_scope(primitive, _), do: primitive
 end
