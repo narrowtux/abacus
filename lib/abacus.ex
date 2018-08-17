@@ -110,7 +110,6 @@ defmodule Abacus do
   def eval(expr, scope, vars) do
     scope = Abacus.Runtime.Scope.prepare_scope(scope, vars)
     try do
-      IO.puts "executing(#{inspect expr}, #{inspect scope})"
        case Code.eval_quoted(expr, scope) do
         {result, _} -> {:ok, result}
       end
