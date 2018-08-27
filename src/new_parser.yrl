@@ -8,6 +8,7 @@ Terminals '(' ')' '{' '}' newline
   '==' '!=' '<=' '>=' '<' '>' nil true false string.
 Nonterminals expr statement statements argument arguments function variable variables signed_number lambda block.
 Rootsymbol expr.
+Left 1200 '(' ')'.
 Right 1100 '=>'.
 Unary 1000 '!'.
 Right 900 '^'.
@@ -89,8 +90,8 @@ argument -> expr : '$1'.
 arguments -> argument : ['$1'].
 arguments -> argument ',' arguments : ['$1' | '$3'].
 
-function -> expr '(' ')' : {'$1', [], []}.
 function -> expr '(' arguments ')' : {'$1', [], '$3'}.
+function -> expr '(' ')' : {'$1', [], []}.
 
 % Strings
 expr -> string : extract_token('$1').
