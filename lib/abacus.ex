@@ -58,8 +58,24 @@ defmodule Abacus do
 
   @spec eval!(expr::tuple | charlist | String.t) :: result::number
   @spec eval!(expr::tuple | charlist | String.t, scope::map) :: result::number
-  def eval(expr) do
-    eval(expr, %{})
+  def eval(source, scope \\ [], vars \\ %{})
+  def eval(source, scope, _vars) when is_binary(source) or is_bitstring(source) do
+    with {:ok, ast, vars} <- compile(source) do
+      eval(ast, scope, vars)
+    end
+  end
+
+  def eval(expr, scope, vars) do
+    scope = Abacus.Runtime.Scope.prepare_scope(scope, vars)
+    try do
+       case Code.eval_quoted(expr, scope) do
+        {result, _} -> {:ok, result}
+      end
+    rescue
+      e -> {:error, e}
+    catch
+      e -> {:error, e}
+    end
   end
 
   @doc """
@@ -97,26 +113,6 @@ defmodule Abacus do
           ast = Abacus.Compile.post_compile(ast, vars)
           Process.delete(:variables)
           {:ok, ast, vars}
-    end
-  end
-
-  def eval(source, scope \\ [], vars \\ %{})
-  def eval(source, scope, _vars) when is_binary(source) or is_bitstring(source) do
-    with {:ok, ast, vars} <- compile(source) do
-      eval(ast, scope, vars)
-    end
-  end
-
-  def eval(expr, scope, vars) do
-    scope = Abacus.Runtime.Scope.prepare_scope(scope, vars)
-    try do
-       case Code.eval_quoted(expr, scope) do
-        {result, _} -> {:ok, result}
-      end
-    rescue
-      e -> {:error, e}
-    catch
-      e -> {:error, e}
     end
   end
 
