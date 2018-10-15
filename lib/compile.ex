@@ -81,10 +81,11 @@ defmodule Abacus.Compile do
     diff
   end
 
-  @compare_ops ~w[== != >= <=]a
+  @compare_ops ~w[== != >= <= > <]a
 
-  def inject_comparison({op, ctx, args}) when op in @compare_ops do
-    {op, ctx, Enum.map(args, &mfa(Abacus.Runtime.Helpers, :cast_for_comparison, [&1]))}
+  def inject_comparison({op, _ctx, args}) when op in @compare_ops do
+    args = Enum.map(args, &mfa(Abacus.Runtime.Helpers, :cast_for_comparison, [&1]))
+    mfa(Abacus.Runtime.Helpers, :compare, [op | args])
   end
   def inject_comparison(ast) do
     ast

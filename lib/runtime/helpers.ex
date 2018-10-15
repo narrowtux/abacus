@@ -6,6 +6,32 @@ defmodule Abacus.Runtime.Helpers do
     other
   end
 
+  @type operator :: :== | :!= | :> | :< | :<= | :>=
+  @spec compare(operator, any, any) :: boolean
+  def compare(op, lhs, rhs) do
+    compare(op, lhs, rhs, typeof(lhs), typeof(rhs))
+  end
+
+  @spec compare(operator, any, any, atom, atom) :: boolean
+  def compare(op, lhs, rhs, type, type) do
+    apply(Kernel, op, [lhs, rhs])
+  end
+  def compare(op, lhs, rhs, lt, rt) when lt in ~w[float integer]a and rt in ~w[float integer]a do
+    apply(Kernel, op, [lhs, rhs])
+  end
+  def compare(op, _, _, lt, rt) when lt != rt and op in ~w[== > < >= <=]a, do: false
+  def compare(:!=, _, _, lt, rt) when lt != rt, do: true
+
+  @type typeof :: :atom | :binary | :float | :integer | :list | :map
+  @spec typeof(any) :: typeof
+  def typeof(a) when is_atom(a), do: :atom
+  def typeof(b) when is_binary(b), do: :binary
+  def typeof(i) when is_integer(i), do: :integer
+  def typeof(f) when is_float(f), do: :float
+  def typeof(b) when is_boolean(b), do: :boolean
+  def typeof(m) when is_map(m), do: :map
+  def typeof(l) when is_list(l), do: :list
+
   @moduledoc """
   Utility functions
   """

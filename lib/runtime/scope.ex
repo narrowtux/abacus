@@ -64,6 +64,7 @@ defmodule Abacus.Runtime.Scope do
   Renames first-level variables into their respective `:"var\#{x}"` atoms
   """
   def prepare_scope(scope, lookup) when is_map(scope) or is_list(scope) do
+    scope = Map.merge(default_scope(), Enum.into(scope, %{}))
     Enum.map(scope, fn
       {k, v} ->
         case Map.get(lookup, to_string(k)) do
@@ -82,4 +83,42 @@ defmodule Abacus.Runtime.Scope do
     end)
   end
   def prepare_scope(primitive, _), do: primitive
+
+  @math_funs_1 ~w[
+    acos
+    acosh
+    asin
+    asinh
+    atan
+    atanh
+    ceil
+    cos
+    cosh
+    exp
+    floor
+    log
+    log10
+    log2
+    sin
+    sinh
+    sqrt
+    tan
+    tanh
+  ]a
+
+  @doc """
+  Returns a scope with some default functions and constants
+  """
+  def default_scope do
+    constants = %{
+      PI: :math.pi(),
+      round: &apply(Float, :round, [&1, &2])
+    }
+
+    Enum.map(@math_funs_1, fn fun ->
+      {fun, &apply(:math, fun, [&1])}
+    end)
+    |> Enum.into(%{})
+    |> Map.merge(constants)
+  end
 end

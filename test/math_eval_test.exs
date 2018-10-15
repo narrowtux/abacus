@@ -89,6 +89,23 @@ defmodule MathEvalTest do
       assert {:ok, false} = Abacus.eval("a == b", %{"a" => :foo, "b" => :bar})
     end
 
+    test "comparison of different types" do
+      assert {:ok, false} = Abacus.eval("a.b > 30", %{a: %{}})
+      assert {:ok, false} = Abacus.eval("a.b < 30", %{a: %{}})
+      assert {:ok, false} = Abacus.eval("null > 30")
+      assert {:ok, false} = Abacus.eval("null <= 30")
+      assert {:ok, false} = Abacus.eval("false >= 30")
+      assert {:ok, true} = Abacus.eval("null == null")
+      assert {:ok, true} = Abacus.eval("null != 30")
+      assert {:ok, true} = Abacus.eval("a == b", %{a: 30, b: 30.0})
+      assert {:ok, true} = Abacus.eval("a == b", %{a: "abc", b: :abc})
+    end
+
+    test "default scope injection" do
+      assert {:ok, 1.0} = Abacus.eval("cos(2 * PI)")
+      assert {:ok, 0.0} = Abacus.eval("sin(0)")
+    end
+
     test "invalid boolean arithmetic" do
       assert {:error, _} = Abacus.eval("false + 1")
     end
