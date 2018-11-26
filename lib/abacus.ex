@@ -102,7 +102,7 @@ defmodule Abacus do
 
   def compile(source) when is_binary(source) do
     source
-    |> :erlang.binary_to_list()
+    |> String.to_charlist()
     |> compile()
   end
   def compile(source) when is_list(source) do

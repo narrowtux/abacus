@@ -9,7 +9,7 @@ B_OPEN = \[
 B_CLOSE = \]
 C_OPEN = \{
 C_CLOSE = \}
-WORD = [a-zA-Z_][a-zA-Z0-9_\-]*
+WORD = [a-zA-Zä-üßÄ-Ü_][a-zA-Zä-üßÄ-Ü0-9_\-]*
 
 PLUS = \+
 MINUS = \-
@@ -79,4 +79,5 @@ true : {token, {true, TokenLine}}.
 {COMMA} : {token, {',', TokenLine}}.
 
 Erlang code.
-parse_string(Chars) -> unicode:characters_to_binary(string:replace(string:replace('Elixir.String':slice(list_to_binary(Chars), 1, length(Chars) - 2), <<"\\\"">>, <<"\"">>, all), <<"\\\\">>, <<"\\">>, all)).
+parse_string(Chars) -> 
+  'Elixir.Abacus.Runtime.Helpers':unescape_string(Chars).

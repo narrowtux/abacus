@@ -67,4 +67,12 @@ defmodule Abacus.Runtime.Helpers do
   end
 
   def _factorial(n, n, r), do: r
+
+  def unescape_string(list) do
+    list
+    |> :unicode.characters_to_binary()
+    |> String.replace_leading("\"", "")
+    |> String.replace_trailing("\"", "")
+    |> String.replace(~r/\\("|\\)/, "\\g{1}")
+  end
 end

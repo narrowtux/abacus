@@ -86,6 +86,7 @@ defmodule MathEvalTest do
       assert {:ok, true} = Abacus.eval("a == b", %{"a" => :foo, "b" => :foo})
       assert {:ok, true} = Abacus.eval("a == b", %{"a" => "foo", "b" => "foo"})
       assert {:ok, true} = Abacus.eval("\"foo\" == b", %{"b" => :foo})
+      assert {:ok, true} = Abacus.eval("\"🤓\" == b", %{"b" => "🤓"})
       assert {:ok, false} = Abacus.eval("a == b", %{"a" => :foo, "b" => :bar})
     end
 
