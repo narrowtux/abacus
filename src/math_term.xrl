@@ -51,7 +51,7 @@ true : {token, {true, TokenLine}}.
 {POWER} : {token, {'^', TokenLine}}.
 {FACTORIAL} : {token, {'!', TokenLine}}.
 {STRING} : {token, {string, TokenLine, parse_string(TokenChars)}}.
-{WORD}  : {token, {word, TokenLine, list_to_binary(TokenChars)}}.
+{WORD}  : {token, {word, TokenLine, unicode:characters_to_binary(TokenChars)}}.
 {B_OPEN} : {token, {'[', TokenLine}}.
 {B_CLOSE} : {token, {']', TokenLine}}.
 {DOT} : {token, {'.', TokenLine}}.
@@ -79,4 +79,4 @@ true : {token, {true, TokenLine}}.
 {COMMA} : {token, {',', TokenLine}}.
 
 Erlang code.
-parse_string(Chars) -> list_to_binary(string:replace(string:replace('Elixir.String':slice(list_to_binary(Chars), 1, length(Chars) - 2), <<"\\\"">>, <<"\"">>, all), <<"\\\\">>, <<"\\">>, all)).
+parse_string(Chars) -> unicode:characters_to_binary(string:replace(string:replace('Elixir.String':slice(list_to_binary(Chars), 1, length(Chars) - 2), <<"\\\"">>, <<"\"">>, all), <<"\\\\">>, <<"\\">>, all)).
