@@ -74,7 +74,7 @@ true : {token, {true, TokenLine}}.
 >  : {token, {'>', TokenLine}}.
 => : {token, {'=>', TokenLine}}.
 
-{NEWLINE} : {token, {newline, TokenLine}}.
+% {NEWLINE} : {token, {newline, TokenLine}}.
 {WHITESPACE}+ : skip_token.
 {COMMA} : {token, {',', TokenLine}}.
 
