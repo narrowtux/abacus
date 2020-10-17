@@ -129,6 +129,9 @@ defmodule Abacus do
     end
   end
 
+  @doc """
+  Takes a Abacus tree, that is a mathematic expression that has already been parsed and extract its variables"""
+  
   def variables(expr) do
     Abacus.Tree.reduce(expr, fn
       {:access, variables} ->
