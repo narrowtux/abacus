@@ -129,6 +129,15 @@ defmodule Abacus do
     end
   end
 
+   def parse_polish(expr) do
+    with {:ok, tokens} <- lex(expr) do
+      :polish_math_term_parser.parse(tokens)
+    else
+      {:error, error, _} -> {:error, error}
+      {:error, error} -> {:error, error}
+    end
+  end
+  
   def variables(expr) do
     Abacus.Tree.reduce(expr, fn
       {:access, variables} ->
