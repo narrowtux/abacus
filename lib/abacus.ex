@@ -129,6 +129,10 @@ defmodule Abacus do
     end
   end
 
+  @doc """
+  Extract the variables from the given expr. The input should be a Ababus and not a string, so the string needs to given to parse/1 and the returned syntax needs to be given to this function
+  """
+  
   def variables(expr) do
     Abacus.Tree.reduce(expr, fn
       {:access, variables} ->
