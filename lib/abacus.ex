@@ -130,7 +130,8 @@ defmodule Abacus do
   end
 
   @doc """
-  Takes a Abacus tree, that is a mathematic expression that has already been parsed and extract its variables"""
+  Extract the variables from the given expr. The input should be a Ababus and not a string, so the string needs to given to parse/1 and the returned syntax needs to be given to this function
+  """
   
   def variables(expr) do
     Abacus.Tree.reduce(expr, fn
