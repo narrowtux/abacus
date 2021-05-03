@@ -3,8 +3,8 @@ defmodule Abacus.Mixfile do
 
   def project do
     [app: :abacus,
-     version: "0.4.2",
-     elixir: "~> 1.3",
+     version: "2.0.0",
+     elixir: "~> 1.8",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      description: description(),
