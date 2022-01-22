@@ -110,18 +110,18 @@ An incomplete list of supported and planned features
 
 ## Installation
 
-  1. Add `abacus` to your list of dependencies in `mix.exs`:
+1. Add `abacus` to your list of dependencies in `mix.exs`:
 
-    ```elixir
-    def deps do
-      [{:abacus, "~> 0.4.2"}]
-    end
-    ```
+  ```elixir
+  def deps do
+    [{:abacus, "~> 0.4.2"}]
+  end
+  ```
 
-  2. Ensure `abacus` is started before your application:
+2. Ensure `abacus` is started before your application:
 
-    ```elixir
-    def application do
-      [applications: [:abacus]]
-    end
-    ```
+  ```elixir
+  def application do
+    [applications: [:abacus]]
+  end
+  ```
