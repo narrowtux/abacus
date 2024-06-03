@@ -2,6 +2,7 @@ defmodule Abacus.Runtime.Helpers do
   def cast_for_comparison(atom) when is_atom(atom) do
     to_string(atom)
   end
+
   def cast_for_comparison(other) do
     other
   end
@@ -16,11 +17,17 @@ defmodule Abacus.Runtime.Helpers do
   def compare(op, lhs, rhs, type, type) do
     apply(Kernel, op, [lhs, rhs])
   end
+
   def compare(op, lhs, rhs, lt, rt) when lt in ~w[float integer]a and rt in ~w[float integer]a do
     apply(Kernel, op, [lhs, rhs])
   end
+
   def compare(op, _, _, lt, rt) when lt != rt and op in ~w[== > < >= <=]a, do: false
   def compare(:!=, _, _, lt, rt) when lt != rt, do: true
+
+  def compare(:in, lhs, rhs, lt, rt) when rt == :list do
+    Enum.member?(rhs, lhs)
+  end
 
   @type typeof :: :atom | :binary | :float | :integer | :list | :map
   @spec typeof(any) :: typeof
@@ -58,12 +65,13 @@ defmodule Abacus.Runtime.Helpers do
   """
   @spec factorial(number) :: number
   def factorial(0), do: 1
+
   def factorial(n) when n > 0 do
     _factorial(1, n, 1)
   end
 
   def _factorial(n, m, r) when n < m do
-     _factorial(n + 1, m, r * (n + 1))
+    _factorial(n + 1, m, r * (n + 1))
   end
 
   def _factorial(n, n, r), do: r

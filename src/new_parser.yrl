@@ -5,7 +5,7 @@ Terminals '(' ')' '{' '}' newline
   '.' '[' ']'
   '~' '&' '|' '|^' '<<' '>>'
   'and' 'or' 'not' '?' ':'
-  '==' '!=' '<=' '>=' '<' '>' nil true false string.
+  '==' '!=' '<=' '>=' '<' '>' 'in' nil true false string.
 Nonterminals expr statement statements argument arguments function variable variables signed_number lambda block.
 Rootsymbol expr.
 Left 1200 '(' ')'.
@@ -17,14 +17,13 @@ Unary 800 '~'.
 Left 750 '*' '/'.
 Left 700 '+' '-'.
 Left 600 '<<' '>>'.
-Left 590 '==' '!=' '<=' '<' '>=' '>'.
+Left 590 '==' '!=' '<=' '<' '>=' '>' 'in'.
 Left 580 '&'.
 Left 550 '|^'.
 Left 520 '|'.
 Left 480 'and'.
 Left 420 'or'.
 Right 300 '?' ':'.
-
 
 Unary 100 function.
 Unary 20 argument.
@@ -41,6 +40,7 @@ expr -> expr '>=' expr : {'>=', [], ['$1', '$3']}.
 expr -> expr '<=' expr : {'<=', [], ['$1', '$3']}.
 expr -> expr '<' expr : {'<', [], ['$1', '$3']}.
 expr -> expr '>' expr : {'>', [], ['$1', '$3']}.
+expr -> expr 'in' variables : {'in', [], ['$1', '$3']}.
 
 expr -> expr 'and' expr : {'&&', [], ['$1', '$3']}.
 expr -> expr 'or' expr : {'||', [], ['$1', '$3']}.
@@ -109,16 +109,18 @@ Erlang code.
 
 extract_token({_Token, _Line, Value}) -> Value.
 
-var({variable, Name}) -> 
-  Variables = 'Elixir.Process':get(variables, maps:new()),
-  Symbol = case maps:get(Name, Variables, nil) of
-    nil -> 
-      Len = maps:size(Variables),
-      LenS = integer_to_binary(Len),
-      SymbolGen = binary_to_atom(<<"var", LenS/binary>>, utf8),
-      UpdatedVariables = maps:put(Name, SymbolGen, Variables),
-      'Elixir.Process':put(variables, UpdatedVariables),
-      SymbolGen;
-    S -> S
-  end,
-  {Symbol, [], 'nil'}.
+var({variable, Name}) ->
+    Variables = 'Elixir.Process':get(variables, maps:new()),
+    Symbol =
+        case maps:get(Name, Variables, nil) of
+            nil ->
+                Len = maps:size(Variables),
+                LenS = integer_to_binary(Len),
+                SymbolGen = binary_to_atom(<<"var", LenS/binary>>, utf8),
+                UpdatedVariables = maps:put(Name, SymbolGen, Variables),
+                'Elixir.Process':put(variables, UpdatedVariables),
+                SymbolGen;
+            S ->
+                S
+        end,
+    {Symbol, [], 'nil'}.

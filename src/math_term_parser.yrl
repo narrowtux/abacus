@@ -5,7 +5,7 @@ Terminals '(' ')'
   '.' '[' ']'
   '~' '&' '|' '|^' '<<' '>>'
   'and' 'or' 'not' '?' ':'
-  '==' '!=' '<=' '>=' '<' '>' nil true false string.
+  '==' '!=' '<=' '>=' '<' '>' 'in' nil true false string.
 Nonterminals expr argument arguments function variable variables signed_number.
 Rootsymbol expr.
 Unary 1000 '!'.
@@ -15,14 +15,13 @@ Unary 800 '~'.
 Left 750 '*' '/'.
 Left 700 '+' '-'.
 Left 600 '<<' '>>'.
-Left 590 '==' '!=' '<=' '<' '>=' '>'.
+Left 590 '==' '!=' '<=' '<' '>=' '>' 'in'.
 Left 580 '&'.
 Left 550 '|^'.
 Left 520 '|'.
 Left 480 'and'.
 Left 420 'or'.
 Right 300 '?' ':'.
-
 
 Unary 100 function.
 Unary 0 variable.
@@ -38,6 +37,7 @@ expr -> expr '>=' expr : {gte, '$1', '$3'}.
 expr -> expr '<=' expr : {lte, '$1', '$3'}.
 expr -> expr '<' expr : {lt, '$1', '$3'}.
 expr -> expr '>' expr : {gt, '$1', '$3'}.
+expr -> expr 'in' variables : {in, concat([extract('$1'), [{index, '$3'}]])}.
 
 expr -> expr 'and' expr : {logical_and, '$1', '$3'}.
 expr -> expr 'or' expr : {logical_or, '$1', '$3'}.

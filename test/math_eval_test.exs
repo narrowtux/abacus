@@ -25,28 +25,30 @@ defmodule MathEvalTest do
     end
 
     test "factorial" do
-      assert {:ok, 3628800} == Abacus.eval("(5 * 2)!")
+      assert {:ok, 3_628_800} == Abacus.eval("(5 * 2)!")
     end
 
     test "variables" do
-      assert {:ok, 10} == Abacus.eval("a.b.c[1]", %{
-        "a" => %{
-          "b" => %{
-            "c" => [
-              1,
-              10,
-              -42
-            ]
-          }
-        }
-        })
+      assert {:ok, 10} ==
+               Abacus.eval("a.b.c[1]", %{
+                 "a" => %{
+                   "b" => %{
+                     "c" => [
+                       1,
+                       10,
+                       -42
+                     ]
+                   }
+                 }
+               })
     end
 
     test "variable in index expression" do
-      assert {:ok, 10} == Abacus.eval("list[a]", %{
-        "list" => [1, 2, 3, 10, 5],
-        "a" => 3
-        })
+      assert {:ok, 10} ==
+               Abacus.eval("list[a]", %{
+                 "list" => [1, 2, 3, 10, 5],
+                 "a" => 3
+               })
     end
 
     test "bitwise operators" do
@@ -100,6 +102,14 @@ defmodule MathEvalTest do
       assert {:ok, true} = Abacus.eval("null != 30")
       assert {:ok, true} = Abacus.eval("a == b", %{a: 30, b: 30.0})
       assert {:ok, true} = Abacus.eval("a == b", %{a: "abc", b: :abc})
+      assert {:ok, false} = Abacus.eval("5 in b", %{a: 30, b: [1, 2, 30]})
+      assert {:ok, true} = Abacus.eval("2 in b", %{a: 30, b: [1, 2, 30]})
+      assert {:ok, true} = Abacus.eval("a in b", %{a: 30, b: [1, 2, 30]})
+      assert {:ok, true} = Abacus.eval("a in b.c", %{a: 30, b: %{c: [1, 2, 30]}})
+      assert {:ok, true} = Abacus.eval("\"a\" in x", %{x: ["a", "b", "c"]})
+      assert {:ok, false} = Abacus.eval("\"d\" in x", %{x: ["a", "b", "c"]})
+      assert {:ok, true} = Abacus.eval("y in x", %{x: ["a", "b", "c"], y: "b"})
+      assert {:ok, false} = Abacus.eval("y in x", %{x: ["a", "b", "c"], y: "d"})
     end
 
     test "default scope injection" do
