@@ -4,7 +4,7 @@ defmodule Abacus.Mixfile do
   def project do
     [
       app: :abacus,
-      version: "2.0.0",
+      version: "2.1.0",
       elixir: "~> 1.8",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -16,7 +16,7 @@ defmodule Abacus.Mixfile do
   end
 
   def application do
-    [applications: [:logger]]
+    [extra_applications: [:logger]]
   end
 
   defp deps do
