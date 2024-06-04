@@ -20,7 +20,7 @@ defmodule Abacus.Compile do
     case contains_bitwise do
       true ->
         quote do
-          use Bitwise
+          import Bitwise
           unquote(ast)
         end
       false ->

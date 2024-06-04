@@ -50,10 +50,10 @@ defmodule MathEvalTest do
     end
 
     test "bitwise operators" do
-      use Bitwise
+      import Bitwise
       assert {:ok, 1 &&& 2} == Abacus.eval("1 & 2")
       assert {:ok, 3 ||| 4} == Abacus.eval("3 | 4")
-      assert {:ok, 1 ^^^ 2} == Abacus.eval("1 |^ 2")
+      assert {:ok, bxor(1, 2)} == Abacus.eval("1 |^ 2")
       assert {:ok, ~~~10} == Abacus.eval("~10")
       assert {:ok, 1 <<< 8} == Abacus.eval("1 << 8")
       assert {:ok, 32 >>> 2} == Abacus.eval("32 >> 2")
@@ -103,8 +103,8 @@ defmodule MathEvalTest do
     end
 
     test "default scope injection" do
-      assert {:ok, 1.0} = Abacus.eval("cos(2 * PI)")
-      assert {:ok, 0.0} = Abacus.eval("sin(0)")
+      assert {:ok, 1.0} == Abacus.eval("cos(2 * PI)")
+      assert {:ok, 0.0} == Abacus.eval("sin(0)")
     end
 
     test "invalid boolean arithmetic" do
