@@ -1,7 +1,7 @@
 Definitions.
 
-FLOAT_END = [0-9]+\.[0-9]*
-FLOAT_START = [0-9]*\.[0-9]+
+FLOAT_END = [0-9]+\.[0-9]+
+FLOAT_START = \.[0-9]+
 INTEGER = [0-9]+
 P_OPEN = \(
 P_CLOSE = \)

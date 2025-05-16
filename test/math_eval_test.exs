@@ -18,6 +18,7 @@ defmodule MathEvalTest do
 
     test "error" do
       assert {:error, _} = Abacus.eval("undefined_function()")
+      assert {:error, _} = Abacus.eval("1.")
     end
 
     test "scoped variables" do
