@@ -100,6 +100,11 @@ defmodule Abacus do
     end
   end
 
+  @doc false
+  def parse(source) do
+    with {:ok, ast, _vars} <- compile(source), do: {:ok, ast}
+  end
+
   def compile(source) when is_binary(source) do
     source
     |> String.to_charlist()
