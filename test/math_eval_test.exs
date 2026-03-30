@@ -121,5 +121,14 @@ defmodule MathEvalTest do
       assert {:ok, [1, 2, "string"]} = Abacus.eval(~s{[1, 2, "string"]})
       assert {:ok, []} = Abacus.eval("[]")
     end
+
+    test "object literals" do
+      assert {:ok, %{}} = Abacus.eval("{}")
+      assert {:ok, %{3 => 4, 5 => 6}} = Abacus.eval("{3: 4, 5: 6}")
+      assert {:ok, %{"foo" => 13, "bar" => 14}} = Abacus.eval("{foo: 13, bar: 14}")
+
+      assert {:ok, %{"foo" => 13, "bar" => 14, 4 => "string"}} =
+               Abacus.eval("{foo: 13, bar: 14, 4: \"string\"}")
+    end
   end
 end

@@ -6,7 +6,7 @@ Terminals '(' ')' '{' '}' newline
   '~' '&' '|' '|^' '<<' '>>'
   'and' 'or' 'not' '?' ':'
   '==' '!=' '<=' '>=' '<' '>' nil true false string.
-Nonterminals expr statement statements argument arguments function variable variables signed_number lambda block list_element list_elements.
+Nonterminals expr statement statements argument arguments function variable variables signed_number lambda block list_element list_elements map_element map_elements.
 Rootsymbol expr.
 Left 1200 '(' ')'.
 Right 1100 '=>'.
@@ -78,6 +78,15 @@ list_element -> expr : '$1'.
 list_elements -> list_element : ['$1'].
 list_elements -> list_element ',' list_elements : ['$1' | '$3'].
 expr -> '[' list_elements ']' : '$2'.
+
+% maps
+expr -> '{' '}' : {'%{}', [], []}.
+expr -> '{' map_elements '}' : {'%{}', [], '$2'}.
+map_element -> word ':' expr : {extract_token('$1'), '$3'}.
+map_element -> expr ':' expr : {'$1', '$3'}.
+map_elements -> map_element : ['$1'].
+map_elements -> map_element ',' map_elements : ['$1' | '$3'].
+
 
 % Grouping
 expr -> '(' expr ')' : '$2'.
