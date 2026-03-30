@@ -6,7 +6,7 @@ Terminals '(' ')' '{' '}' newline
   '~' '&' '|' '|^' '<<' '>>'
   'and' 'or' 'not' '?' ':'
   '==' '!=' '<=' '>=' '<' '>' nil true false string.
-Nonterminals expr statement statements argument arguments function variable variables signed_number lambda block.
+Nonterminals expr statement statements argument arguments function variable variables signed_number lambda block list_element list_elements.
 Rootsymbol expr.
 Left 1200 '(' ')'.
 Right 1100 '=>'.
@@ -48,9 +48,9 @@ expr -> 'not' expr : {'not', [], ['$2']}.
 
 % ternary if op
 expr -> expr '?' expr ':' expr : {'if', [{import, 'Elixir.Kernel'}], [
-    '$1', 
+    '$1',
     [
-      {'do', '$3'}, 
+      {'do', '$3'},
       {'else', '$5'}
     ]
   ]
@@ -71,6 +71,13 @@ expr -> expr '-' expr : {'-', [], ['$1', '$3']}.
 expr -> expr '/' expr : {'/', [], ['$1', '$3']}.
 expr -> expr '*' expr : {'*', [], ['$1', '$3']}.
 expr -> expr '!' : {'!', [], ['$1']}.
+
+% lists
+expr -> '[' ']' : [].
+list_element -> expr : '$1'.
+list_elements -> list_element : ['$1'].
+list_elements -> list_element ',' list_elements : ['$1' | '$3'].
+expr -> '[' list_elements ']' : '$2'.
 
 % Grouping
 expr -> '(' expr ')' : '$2'.
@@ -105,14 +112,14 @@ variables -> variable : var('$1').
 variables -> variables '.' variable : {'.', [], ['$1', '$3']}.
 variables -> variables '[' expr ']' : {'.', [], ['$1', '$3']}.
 
-Erlang code. 
+Erlang code.
 
 extract_token({_Token, _Line, Value}) -> Value.
 
-var({variable, Name}) -> 
+var({variable, Name}) ->
   Variables = 'Elixir.Process':get(variables, maps:new()),
   Symbol = case maps:get(Name, Variables, nil) of
-    nil -> 
+    nil ->
       Len = maps:size(Variables),
       LenS = integer_to_binary(Len),
       SymbolGen = binary_to_atom(<<"var", LenS/binary>>, utf8),

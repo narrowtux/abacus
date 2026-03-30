@@ -25,28 +25,30 @@ defmodule MathEvalTest do
     end
 
     test "factorial" do
-      assert {:ok, 3628800} == Abacus.eval("(5 * 2)!")
+      assert {:ok, 3_628_800} == Abacus.eval("(5 * 2)!")
     end
 
     test "variables" do
-      assert {:ok, 10} == Abacus.eval("a.b.c[1]", %{
-        "a" => %{
-          "b" => %{
-            "c" => [
-              1,
-              10,
-              -42
-            ]
-          }
-        }
-        })
+      assert {:ok, 10} ==
+               Abacus.eval("a.b.c[1]", %{
+                 "a" => %{
+                   "b" => %{
+                     "c" => [
+                       1,
+                       10,
+                       -42
+                     ]
+                   }
+                 }
+               })
     end
 
     test "variable in index expression" do
-      assert {:ok, 10} == Abacus.eval("list[a]", %{
-        "list" => [1, 2, 3, 10, 5],
-        "a" => 3
-        })
+      assert {:ok, 10} ==
+               Abacus.eval("list[a]", %{
+                 "list" => [1, 2, 3, 10, 5],
+                 "a" => 3
+               })
     end
 
     test "bitwise operators" do
@@ -113,6 +115,11 @@ defmodule MathEvalTest do
 
     test "unexpected token" do
       assert {:error, _} = Abacus.eval("1 + )")
+    end
+
+    test "array literals" do
+      assert {:ok, [1, 2, "string"]} = Abacus.eval(~s{[1, 2, "string"]})
+      assert {:ok, []} = Abacus.eval("[]")
     end
   end
 end
