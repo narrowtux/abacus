@@ -117,6 +117,11 @@ defmodule MathEvalTest do
       assert {:error, _} = Abacus.eval("1 + )")
     end
 
+    test "trailing dot float" do
+      assert {:ok, 1.0} == Abacus.eval("1.")
+      assert {:ok, 42.0} == Abacus.eval("42.")
+    end
+
     test "array literals" do
       assert {:ok, [1, 2, "string"]} = Abacus.eval(~s{[1, 2, "string"]})
       assert {:ok, []} = Abacus.eval("[]")
