@@ -38,7 +38,7 @@ false : {token, {false, TokenLine}}.
 true : {token, {true, TokenLine}}.
 
 {INTEGER}    : {token, {number, TokenLine, list_to_integer(TokenChars)}}.
-{FLOAT_END}      : {token, {number, TokenLine, list_to_float(TokenChars)}}.
+{FLOAT_END}      : {token, {number, TokenLine, list_to_float(pad_float_end(TokenChars))}}.
 {FLOAT_START}      : {token, {number, TokenLine, list_to_float([48 | TokenChars])}}.
 {P_OPEN}    : {token, {'(', TokenLine}}.
 {P_CLOSE}   : {token, {')', TokenLine}}.
@@ -79,5 +79,13 @@ true : {token, {true, TokenLine}}.
 {COMMA} : {token, {',', TokenLine}}.
 
 Erlang code.
-parse_string(Chars) -> 
+parse_string(Chars) ->
   'Elixir.Abacus.Runtime.Helpers':unescape_string(Chars).
+
+% A FLOAT_END token like "1." has no digits after the dot, which
+% list_to_float/1 rejects. Append a trailing zero so it parses as "1.0".
+pad_float_end(Chars) ->
+  case lists:last(Chars) of
+    $. -> Chars ++ "0";
+    _ -> Chars
+  end.
